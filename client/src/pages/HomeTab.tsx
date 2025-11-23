@@ -40,15 +40,15 @@ export default function HomeTab({ onNavigate }: HomeTabProps) {
           </div>
         </Card>
 
-        {/* Quizzes Card */}
+        {/* Randomizers Card */}
         <Card
           className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-6 cursor-pointer hover:scale-[1.02] transition-transform shadow-xl stagger-item"
-          onClick={() => onNavigate('quizzes')}
+          onClick={() => onNavigate('randomizers')}
         >
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h2 className="text-2xl font-bold mb-2">{t.home.quizzesCard}</h2>
-              <p className="text-white/90">{t.home.quizzesDesc}</p>
+              <h2 className="text-2xl font-bold mb-2">{t.home.randomizersCard}</h2>
+              <p className="text-white/90">{t.home.randomizersDesc}</p>
             </div>
             <BrainIcon className="text-white/80" size={48} />
           </div>

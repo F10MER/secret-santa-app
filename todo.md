@@ -72,3 +72,20 @@
 - [x] Test dark mode with Telegram theme
 - [x] Test language switching
 - [x] Final UI polish and animations
+
+## New Features - Randomizers (Replace Quizzes)
+- [x] Remove Quizzes tab and related code
+- [x] Create Randomizers tab
+- [x] Dice Roller component
+  - [x] Visual dice display
+  - [x] Roll animation
+  - [x] Random number generation (1-6)
+  - [x] "Бросить кубики" button
+- [x] Roulette component
+  - [x] Dynamic participant input (3-100)
+  - [x] Pie chart visualization
+  - [x] Spin animation
+  - [x] Winner selection
+  - [x] "Запустить рулетку" button
+- [x] Update navigation icons and labels
+- [x] Update i18n translations for randomizers

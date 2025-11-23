@@ -7,7 +7,7 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import { BottomNav } from "./components/BottomNav";
 import HomeTab from "./pages/HomeTab";
 import SecretSantaTab from "./pages/SecretSantaTab";
-import QuizzesTab from "./pages/QuizzesTab";
+import RandomizersTab from "./pages/RandomizersTab";
 import ProfileTab from "./pages/ProfileTab";
 
 function App() {
@@ -19,8 +19,8 @@ function App() {
         return <HomeTab onNavigate={setActiveTab} />;
       case 'santa':
         return <SecretSantaTab />;
-      case 'quizzes':
-        return <QuizzesTab />;
+      case 'randomizers':
+        return <RandomizersTab />;
       case 'profile':
         return <ProfileTab />;
       default:

@@ -6,7 +6,7 @@ export const translations = {
     nav: {
       home: 'Home',
       secretSanta: 'Secret Santa',
-      quizzes: 'Quizzes',
+      randomizers: 'Randomizers',
       profile: 'Profile',
     },
     // Home Tab
@@ -15,8 +15,8 @@ export const translations = {
       bonusPoints: 'Bonus Points',
       secretSantaCard: 'Secret Santa',
       secretSantaDesc: 'Organize gift exchanges',
-      quizzesCard: 'Quizzes',
-      quizzesDesc: 'Test your knowledge',
+      randomizersCard: 'Randomizers',
+      randomizersDesc: 'Dice and Roulette',
       leaderboardBanner: 'View Leaderboard',
     },
     // Secret Santa Tab
@@ -37,18 +37,19 @@ export const translations = {
       assigned: 'Assigned',
       noEvents: 'No events yet. Create your first Secret Santa event!',
     },
-    // Quizzes Tab
-    quizzes: {
-      title: 'Available Quizzes',
-      start: 'Start Quiz',
-      next: 'Next',
-      finish: 'Finish',
-      progress: 'Question',
-      of: 'of',
-      success: 'Quiz Completed!',
-      earnedPoints: 'You earned',
-      points: 'points',
-      backToList: 'Back to Quizzes',
+    // Randomizers Tab
+    randomizers: {
+      title: 'Randomizers',
+      diceRoller: 'Dice Roller',
+      roulette: 'Roulette',
+      rollDice: 'Roll Dice',
+      rolling: 'Rolling...',
+      total: 'Total',
+      spinRoulette: 'Spin Roulette',
+      spinning: 'Spinning...',
+      winner: 'Winner',
+      enterParticipant: 'Enter participant name',
+      participantCount: 'Participants',
     },
     // Profile Tab
     profile: {
@@ -86,7 +87,7 @@ export const translations = {
     nav: {
       home: 'Главная',
       secretSanta: 'Тайный Санта',
-      quizzes: 'Викторины',
+      randomizers: 'Рандомайзеры',
       profile: 'Профиль',
     },
     // Home Tab
@@ -95,8 +96,8 @@ export const translations = {
       bonusPoints: 'Бонусные Баллы',
       secretSantaCard: 'Тайный Санта',
       secretSantaDesc: 'Организуйте обмен подарками',
-      quizzesCard: 'Викторины',
-      quizzesDesc: 'Проверьте свои знания',
+      randomizersCard: 'Рандомайзеры',
+      randomizersDesc: 'Кубики и Рулетка',
       leaderboardBanner: 'Таблица Лидеров',
     },
     // Secret Santa Tab
@@ -117,18 +118,19 @@ export const translations = {
       assigned: 'Назначено',
       noEvents: 'Событий пока нет. Создайте своё первое событие Тайного Санты!',
     },
-    // Quizzes Tab
-    quizzes: {
-      title: 'Доступные Викторины',
-      start: 'Начать Викторину',
-      next: 'Далее',
-      finish: 'Завершить',
-      progress: 'Вопрос',
-      of: 'из',
-      success: 'Викторина Завершена!',
-      earnedPoints: 'Вы заработали',
-      points: 'баллов',
-      backToList: 'Назад к Викторинам',
+    // Randomizers Tab
+    randomizers: {
+      title: 'Рандомайзеры',
+      diceRoller: 'Бросить Кубики',
+      roulette: 'Рулетка',
+      rollDice: 'Бросить Кубики',
+      rolling: 'Бросаем...',
+      total: 'Сумма',
+      spinRoulette: 'Запустить Рулетку',
+      spinning: 'Крутится...',
+      winner: 'Победитель',
+      enterParticipant: 'Введите имя участника',
+      participantCount: 'Участников',
     },
     // Profile Tab
     profile: {

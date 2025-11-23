@@ -13,7 +13,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   const tabs = [
     { id: 'home', label: t.nav.home, icon: HomeIcon },
     { id: 'santa', label: t.nav.secretSanta, icon: GiftIcon },
-    { id: 'quizzes', label: t.nav.quizzes, icon: BrainIcon },
+    { id: 'randomizers', label: t.nav.randomizers, icon: BrainIcon },
     { id: 'profile', label: t.nav.profile, icon: UserIcon },
   ];
 
