@@ -101,6 +101,19 @@ export const randomizerHistory = mysqlTable("randomizer_history", {
 export type RandomizerHistory = typeof randomizerHistory.$inferSelect;
 export type InsertRandomizerHistory = typeof randomizerHistory.$inferInsert;
 
+/**
+ * Wishlist Item Reservations (for gift booking)
+ */
+export const wishlistReservations = mysqlTable("wishlist_reservations", {
+  id: int("id").autoincrement().primaryKey(),
+  wishlistItemId: int("wishlistItemId").notNull(),
+  reservedBy: int("reservedBy").notNull(), // User ID who reserved
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type WishlistReservation = typeof wishlistReservations.$inferSelect;
+export type InsertWishlistReservation = typeof wishlistReservations.$inferInsert;
+
 // Relations
 export const usersRelations = relations(users, ({ many, one }) => ({
   createdEvents: many(santaEvents),
@@ -149,9 +162,21 @@ export const santaAssignmentsRelations = relations(santaAssignments, ({ one }) =
   }),
 }));
 
-export const wishlistItemsRelations = relations(wishlistItems, ({ one }) => ({
+export const wishlistItemsRelations = relations(wishlistItems, ({ one, many }) => ({
   user: one(users, {
     fields: [wishlistItems.userId],
+    references: [users.id],
+  }),
+  reservations: many(wishlistReservations),
+}));
+
+export const wishlistReservationsRelations = relations(wishlistReservations, ({ one }) => ({
+  wishlistItem: one(wishlistItems, {
+    fields: [wishlistReservations.wishlistItemId],
+    references: [wishlistItems.id],
+  }),
+  reservedByUser: one(users, {
+    fields: [wishlistReservations.reservedBy],
     references: [users.id],
   }),
 }));

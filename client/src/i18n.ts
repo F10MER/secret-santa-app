@@ -87,6 +87,12 @@ export const translations = {
       public: 'Public',
       createYourOwn: 'Want to create your own wishlist?',
       startBot: 'Start Secret Santa Bot',
+      reserveGift: 'Reserve This Gift',
+      reserved: 'Gift reserved successfully!',
+      unreserved: 'Reservation cancelled',
+      cancelReservation: 'Cancel Reservation',
+      alreadyReserved: 'Already reserved by someone',
+      loginRequired: 'Please login to reserve gifts',
     },
     // Common
     common: {
@@ -183,6 +189,12 @@ export const translations = {
       public: 'Публичный',
       createYourOwn: 'Хотите создать свой список желаний?',
       startBot: 'Запустить Бота Secret Santa',
+      reserveGift: 'Забронировать Подарок',
+      reserved: 'Подарок успешно забронирован!',
+      unreserved: 'Бронирование отменено',
+      cancelReservation: 'Отменить Бронирование',
+      alreadyReserved: 'Уже забронировано кем-то',
+      loginRequired: 'Войдите, чтобы забронировать подарки',
     },
     // Common
     common: {

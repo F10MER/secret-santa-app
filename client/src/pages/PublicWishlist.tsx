@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { GiftIcon, LockIcon } from '../components/Icons';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTelegram } from '../contexts/TelegramContext';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 
@@ -12,16 +13,53 @@ interface PublicWishlistProps {
 
 export default function PublicWishlist({ userId }: PublicWishlistProps) {
   const { t } = useLanguage();
+  const { user: tgUser } = useTelegram();
   const [userName, setUserName] = useState('');
 
   // Fetch public wishlist
-  const { data: wishlist = [], isLoading, error } = trpc.wishlist.getPublicWishlist.useQuery({ userId });
+  const { data: wishlist = [], isLoading, error, refetch } = trpc.wishlist.getPublicWishlist.useQuery({ userId });
+  
+  // Mutations
+  const reserveMutation = trpc.wishlist.reserveGift.useMutation({
+    onSuccess: () => {
+      toast.success(t.wishlist.reserved || 'Gift reserved successfully!');
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const unreserveMutation = trpc.wishlist.unreserveGift.useMutation({
+    onSuccess: () => {
+      toast.success(t.wishlist.unreserved || 'Reservation cancelled');
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   useEffect(() => {
     // Extract user name from URL or use default
     const params = new URLSearchParams(window.location.search);
     setUserName(params.get('name') || t.wishlist.user);
   }, [t]);
+
+  const handleReserve = (itemId: number) => {
+    if (!tgUser) {
+      toast.error(t.wishlist.loginRequired || 'Please login to reserve gifts');
+      return;
+    }
+    reserveMutation.mutate({ wishlistItemId: itemId });
+  };
+
+  const handleUnreserve = (itemId: number) => {
+    unreserveMutation.mutate({ wishlistItemId: itemId });
+  };
+
+  // Check if current user is the wishlist owner
+  const isOwner = tgUser?.id === userId;
 
   if (isLoading) {
     return (
@@ -57,58 +95,92 @@ export default function PublicWishlist({ userId }: PublicWishlistProps) {
           <GiftIcon size={20} />
           {t.wishlist.title}
         </p>
+        <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-sm">
+          <LockIcon size={16} />
+          {t.wishlist.public}
+        </div>
       </div>
 
       {/* Wishlist Items */}
       {wishlist.length === 0 ? (
         <Card className="p-12 text-center">
-          <GiftIcon size={64} className="mx-auto mb-4 opacity-30" />
-          <p className="text-xl font-semibold mb-2">{t.wishlist.empty}</p>
-          <p className="text-muted-foreground">{t.wishlist.emptyDesc}</p>
+          <GiftIcon size={64} className="mx-auto mb-4 opacity-20" />
+          <h3 className="text-xl font-semibold mb-2">{t.wishlist.empty}</h3>
+          <p className="text-muted-foreground mb-6">{t.wishlist.emptyDesc}</p>
+          
+          {!isOwner && (
+            <div className="mt-6 p-4 bg-muted rounded-lg">
+              <p className="font-medium mb-3">{t.wishlist.createYourOwn}</p>
+              <Button onClick={() => window.open('https://t.me/moisanta_bot', '_blank')}>
+                {t.wishlist.startBot}
+              </Button>
+            </div>
+          )}
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-          {wishlist.map((item, index) => (
-            <Card
-              key={item.id}
-              className="overflow-hidden hover:shadow-lg transition-shadow stagger-item"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              {item.imageUrl && (
-                <div className="aspect-video w-full overflow-hidden bg-muted">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+          {wishlist.map((item: any, index: number) => {
+            // For demo purposes, we'll use a simple check
+            // In real implementation, you'd fetch reservation status from API
+            const isReserved = false; // TODO: Implement actual reservation check
+            const isReservedByMe = false; // TODO: Check if current user reserved this
+
+            return (
+              <Card
+                key={item.id}
+                className="overflow-hidden stagger-item relative"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                {item.imageUrl && (
                   <img
                     src={item.imageUrl}
                     alt={item.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-48 object-cover"
                   />
-                </div>
-              )}
-              <div className="p-4">
-                <h3 className="font-bold text-lg mb-2">{item.title}</h3>
-                {item.description && (
-                  <p className="text-sm text-muted-foreground mb-3">{item.description}</p>
                 )}
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <LockIcon size={14} />
-                  <span>{t.wishlist.public}</span>
+                <div className="p-4">
+                  <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
+                  {item.description && (
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                      {item.description}
+                    </p>
+                  )}
+
+                  {/* Reservation UI - Only visible to non-owners */}
+                  {!isOwner && (
+                    <div className="mt-4">
+                      {isReservedByMe ? (
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => handleUnreserve(item.id)}
+                          disabled={unreserveMutation.isPending}
+                        >
+                          {unreserveMutation.isPending ? t.common.loading : (t.wishlist.cancelReservation || 'Cancel Reservation')}
+                        </Button>
+                      ) : isReserved ? (
+                        <div className="text-center py-2 px-4 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-md text-sm">
+                          {t.wishlist.alreadyReserved || 'Already reserved by someone'}
+                        </div>
+                      ) : (
+                        <Button
+                          variant="default"
+                          className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700"
+                          onClick={() => handleReserve(item.id)}
+                          disabled={reserveMutation.isPending}
+                        >
+                          <GiftIcon size={18} className="mr-2" />
+                          {reserveMutation.isPending ? t.common.loading : (t.wishlist.reserveGift || 'Reserve This Gift')}
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       )}
-
-      {/* Footer */}
-      <div className="text-center mt-12">
-        <p className="text-sm text-muted-foreground mb-4">{t.wishlist.createYourOwn}</p>
-        <Button
-          onClick={() => window.open('https://t.me/moisanta_bot', '_blank')}
-          className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700"
-        >
-          <GiftIcon className="mr-2" size={20} />
-          {t.wishlist.startBot}
-        </Button>
-      </div>
     </div>
   );
 }

@@ -7,11 +7,13 @@ import {
   eventParticipants, 
   santaAssignments,
   wishlistItems,
+  wishlistReservations,
   randomizerHistory,
   InsertSantaEvent,
   InsertEventParticipant,
   InsertSantaAssignment,
   InsertWishlistItem,
+  InsertWishlistReservation,
   InsertRandomizerHistory
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -259,4 +261,66 @@ export async function getReferralCount(userId: number) {
 
   const result = await db.select({ count: sql<number>`count(*)` }).from(users).where(eq(users.referredBy, userId));
   return result[0]?.count || 0;
+}
+
+// Wishlist Reservations
+export async function reserveWishlistItem(wishlistItemId: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Check if already reserved
+  const existing = await db
+    .select()
+    .from(wishlistReservations)
+    .where(eq(wishlistReservations.wishlistItemId, wishlistItemId))
+    .limit(1);
+
+  if (existing.length > 0) {
+    throw new Error("This item is already reserved");
+  }
+
+  const reservation: InsertWishlistReservation = {
+    wishlistItemId,
+    reservedBy: userId,
+  };
+
+  const result = await db.insert(wishlistReservations).values(reservation);
+  return Number((result as any).insertId);
+}
+
+export async function unreserveWishlistItem(wishlistItemId: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .delete(wishlistReservations)
+    .where(
+      and(
+        eq(wishlistReservations.wishlistItemId, wishlistItemId),
+        eq(wishlistReservations.reservedBy, userId)
+      )
+    );
+}
+
+export async function getWishlistItemReservation(wishlistItemId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(wishlistReservations)
+    .where(eq(wishlistReservations.wishlistItemId, wishlistItemId))
+    .limit(1);
+
+  return result[0] || null;
+}
+
+export async function getUserReservations(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db
+    .select()
+    .from(wishlistReservations)
+    .where(eq(wishlistReservations.reservedBy, userId));
 }

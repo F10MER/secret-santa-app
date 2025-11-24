@@ -131,3 +131,13 @@
 - [x] Generate shareable link with user ID
 - [x] Add route for public wishlist viewing
 - [x] Test wishlist sharing functionality
+
+## Gift Reservation Feature
+- [x] Add WishlistReservations table to database schema
+- [x] Create API endpoint to reserve a gift
+- [x] Create API endpoint to unreserve a gift
+- [x] Create API endpoint to check reservation status
+- [x] Add "Reserve" button on public wishlist page
+- [x] Show reservation status to other users (not owner)
+- [x] Add ability to cancel own reservation
+- [x] Test reservation functionality

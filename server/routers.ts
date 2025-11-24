@@ -220,6 +220,41 @@ export const appRouter = router({
         
         return { url };
       }),
+
+    // Reserve gift
+    reserveGift: protectedProcedure
+      .input(z.object({ wishlistItemId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        try {
+          const reservationId = await db.reserveWishlistItem(input.wishlistItemId, ctx.user.id);
+          return { success: true, reservationId };
+        } catch (error: any) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: error.message || "Failed to reserve gift"
+          });
+        }
+      }),
+
+    // Unreserve gift
+    unreserveGift: protectedProcedure
+      .input(z.object({ wishlistItemId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.unreserveWishlistItem(input.wishlistItemId, ctx.user.id);
+        return { success: true };
+      }),
+
+    // Get reservation status
+    getReservation: publicProcedure
+      .input(z.object({ wishlistItemId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getWishlistItemReservation(input.wishlistItemId);
+      }),
+
+    // Get my reservations
+    getMyReservations: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getUserReservations(ctx.user.id);
+    }),
   }),
 
   // Randomizers
