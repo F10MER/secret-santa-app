@@ -1,5 +1,6 @@
 import { eq, desc, and, sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import { 
   InsertUser, 
   users, 
@@ -19,11 +20,16 @@ import {
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
+let _pool: Pool | null = null;
 
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      _pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+      });
+      _db = drizzle(_pool);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -92,7 +98,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date();
     }
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
+    await db.insert(users).values(values).onConflictDoUpdate({
+      target: users.openId,
       set: updateSet,
     });
   } catch (error) {
@@ -125,8 +132,8 @@ export async function createSantaEvent(event: InsertSantaEvent) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const result = await db.insert(santaEvents).values(event);
-  return Number((result as any).insertId);
+  const result = await db.insert(santaEvents).values(event).returning({ id: santaEvents.id });
+  return result[0]?.id;
 }
 
 export async function getUserEvents(userId: number) {
@@ -156,8 +163,8 @@ export async function addParticipant(participant: InsertEventParticipant) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const result = await db.insert(eventParticipants).values(participant);
-  return Number((result as any).insertId);
+  const result = await db.insert(eventParticipants).values(participant).returning({ id: eventParticipants.id });
+  return result[0]?.id;
 }
 
 export async function getEventParticipants(eventId: number) {
@@ -193,8 +200,8 @@ export async function createWishlistItem(item: InsertWishlistItem) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const result = await db.insert(wishlistItems).values(item);
-  return Number((result as any).insertId);
+  const result = await db.insert(wishlistItems).values(item).returning({ id: wishlistItems.id });
+  return result[0]?.id;
 }
 
 export async function getUserWishlist(userId: number) {
@@ -223,8 +230,8 @@ export async function saveRandomizerResult(history: InsertRandomizerHistory) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const result = await db.insert(randomizerHistory).values(history);
-  return Number((result as any).insertId);
+  const result = await db.insert(randomizerHistory).values(history).returning({ id: randomizerHistory.id });
+  return result[0]?.id;
 }
 
 export async function getUserRandomizerHistory(userId: number, limit: number = 20) {
@@ -284,8 +291,8 @@ export async function reserveWishlistItem(wishlistItemId: number, userId: number
     reservedBy: userId,
   };
 
-  const result = await db.insert(wishlistReservations).values(reservation);
-  return Number((result as any).insertId);
+  const result = await db.insert(wishlistReservations).values(reservation).returning({ id: wishlistReservations.id });
+  return result[0]?.id;
 }
 
 export async function unreserveWishlistItem(wishlistItemId: number, userId: number) {
