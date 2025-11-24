@@ -1,8 +1,10 @@
-import { Bot, Context, InlineKeyboard } from "grammy";
+import { Bot, Context, InlineKeyboard, webhookCallback } from "grammy";
 import * as db from "./db";
 
 // Bot token will be provided via environment variable
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
+const WEBHOOK_URL = process.env.WEBHOOK_URL || "";
+const NODE_ENV = process.env.NODE_ENV || "development";
 
 if (!BOT_TOKEN) {
   console.warn("[Bot] TELEGRAM_BOT_TOKEN not set, bot will not start");
@@ -94,12 +96,44 @@ export function initBot() {
     console.error("[Bot] Error:", err);
   });
 
-  // Start bot
-  bot.start({
-    onStart: () => console.log("[Bot] Telegram bot started successfully"),
-  });
+  // Use webhook in production, polling in development
+  if (NODE_ENV === "production" && WEBHOOK_URL) {
+    // Webhook will be set up via the webhook endpoint
+    console.log("[Bot] Bot initialized for webhook mode");
+  } else {
+    // Use polling in development
+    bot.start({
+      onStart: () => console.log("[Bot] Telegram bot started in polling mode (development)"),
+    });
+  }
 
   return bot;
+}
+
+// Export webhook handler for Express
+export function getBotWebhookHandler() {
+  if (!bot) {
+    throw new Error("Bot not initialized");
+  }
+  return webhookCallback(bot, "express");
+}
+
+// Setup webhook
+export async function setupWebhook() {
+  if (!bot || !WEBHOOK_URL) {
+    console.warn("[Bot] Cannot setup webhook: bot or webhook URL not configured");
+    return false;
+  }
+
+  try {
+    const webhookPath = `${WEBHOOK_URL}/api/telegram-webhook`;
+    await bot.api.setWebhook(webhookPath);
+    console.log(`[Bot] Webhook set to: ${webhookPath}`);
+    return true;
+  } catch (error) {
+    console.error("[Bot] Failed to set webhook:", error);
+    return false;
+  }
 }
 
 // Notification functions
