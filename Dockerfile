@@ -39,7 +39,6 @@ RUN pnpm install --prod --frozen-lockfile
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/client/dist ./client/dist
 
 # Copy drizzle files for migrations
 COPY drizzle ./drizzle
