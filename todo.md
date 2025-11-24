@@ -141,3 +141,12 @@
 - [x] Show reservation status to other users (not owner)
 - [x] Add ability to cancel own reservation
 - [x] Test reservation functionality
+
+## My Reservations Page
+- [x] Create API endpoint to fetch user's reservations with full item details
+- [x] Create MyReservations page component
+- [x] Display reserved items with images, titles, and owner info
+- [x] Add "Cancel Reservation" button for each item
+- [x] Add navigation button in Profile tab
+- [x] Add translations for My Reservations page
+- [x] Test My Reservations functionality

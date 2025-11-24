@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { SectionTitle } from '../components/SectionTitle';
@@ -9,15 +9,18 @@ import {
   LockIcon,
   ShareIcon,
   PlusIcon,
+  GiftIcon,
 } from '../components/Icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { MOCK_USER, MOCK_LEADERBOARD } from '../constants';
 import { WishlistItem } from '../types';
 import { toast } from 'sonner';
+import MyReservations from './MyReservations';
 
 export default function ProfileTab() {
   const { t, language, setLanguage } = useLanguage();
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [showMyReservations, setShowMyReservations] = useState(false);
   const [wishlistPrivacy, setWishlistPrivacy] = useState<'all' | 'friends'>('all');
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -68,6 +71,11 @@ export default function ProfileTab() {
       .join('')
       .toUpperCase();
   };
+
+  // My Reservations View
+  if (showMyReservations) {
+    return <MyReservations onBack={() => setShowMyReservations(false)} />;
+  }
 
   // Leaderboard Modal
   if (showLeaderboard) {
@@ -154,10 +162,19 @@ export default function ProfileTab() {
       {/* Leaderboard Button */}
       <Button
         onClick={() => setShowLeaderboard(true)}
-        className="w-full mb-6 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-gray-900"
+        className="w-full mb-4 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-gray-900"
       >
         <TrophyIcon size={20} className="mr-2" />
         {t.profile.leaderboard}
+      </Button>
+
+      {/* My Reservations Button */}
+      <Button
+        onClick={() => setShowMyReservations(true)}
+        className="w-full mb-6 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700"
+      >
+        <GiftIcon size={20} className="mr-2" />
+        {t.reservations.title}
       </Button>
 
       {/* Wishlist Section */}

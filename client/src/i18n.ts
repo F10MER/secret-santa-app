@@ -94,6 +94,17 @@ export const translations = {
       alreadyReserved: 'Already reserved by someone',
       loginRequired: 'Please login to reserve gifts',
     },
+    // My Reservations
+    reservations: {
+      title: 'My Reservations',
+      empty: 'No reservations yet',
+      emptyDesc: 'You haven\'t reserved any gifts for your friends yet',
+      description: 'You have reserved {count} gift{s} for your friends',
+      for: 'For',
+      unknown: 'Unknown',
+      untitled: 'Untitled',
+      confirmCancel: 'Are you sure you want to cancel this reservation?',
+    },
     // Common
     common: {
       cancel: 'Cancel',
@@ -195,6 +206,17 @@ export const translations = {
       cancelReservation: 'Отменить Бронирование',
       alreadyReserved: 'Уже забронировано кем-то',
       loginRequired: 'Войдите, чтобы забронировать подарки',
+    },
+    // My Reservations
+    reservations: {
+      title: 'Мои Бронирования',
+      empty: 'Пока нет бронирований',
+      emptyDesc: 'Вы ещё не забронировали подарки для друзей',
+      description: 'Вы забронировали {count} подарков для друзей',
+      for: 'Для',
+      unknown: 'Неизвестно',
+      untitled: 'Без названия',
+      confirmCancel: 'Вы уверены, что хотите отменить это бронирование?',
     },
     // Common
     common: {

@@ -319,8 +319,22 @@ export async function getUserReservations(userId: number) {
   const db = await getDb();
   if (!db) return [];
 
-  return await db
-    .select()
+  const reservations = await db
+    .select({
+      id: wishlistReservations.id,
+      wishlistItemId: wishlistReservations.wishlistItemId,
+      reservedBy: wishlistReservations.reservedBy,
+      createdAt: wishlistReservations.createdAt,
+      itemTitle: wishlistItems.title,
+      itemDescription: wishlistItems.description,
+      itemImageUrl: wishlistItems.imageUrl,
+      ownerId: wishlistItems.userId,
+      ownerName: users.name,
+    })
     .from(wishlistReservations)
+    .leftJoin(wishlistItems, eq(wishlistReservations.wishlistItemId, wishlistItems.id))
+    .leftJoin(users, eq(wishlistItems.userId, users.id))
     .where(eq(wishlistReservations.reservedBy, userId));
+
+  return reservations;
 }
