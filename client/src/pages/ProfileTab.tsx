@@ -55,6 +55,12 @@ export default function ProfileTab() {
     toast.success(t.profile.linkCopied);
   };
 
+  const handleShareWishlist = () => {
+    const wishlistLink = `${window.location.origin}/wishlist/${MOCK_USER.id}?name=${encodeURIComponent(MOCK_USER.name)}`;
+    navigator.clipboard.writeText(wishlistLink);
+    toast.success(t.profile.wishlistLinkCopied);
+  };
+
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -260,14 +266,25 @@ export default function ProfileTab() {
         </div>
       </Card>
 
-      <Button
-        onClick={handleShareReferral}
-        variant="outline"
-        className="w-full"
-      >
-        <ShareIcon size={20} className="mr-2" />
-        {t.profile.shareReferral}
-      </Button>
+      <div className="space-y-3">
+        <Button
+          onClick={handleShareWishlist}
+          variant="outline"
+          className="w-full"
+        >
+          <ShareIcon size={20} className="mr-2" />
+          {t.profile.shareWishlist}
+        </Button>
+        
+        <Button
+          onClick={handleShareReferral}
+          variant="outline"
+          className="w-full"
+        >
+          <ShareIcon size={20} className="mr-2" />
+          {t.profile.shareReferral}
+        </Button>
+      </div>
     </div>
   );
 }

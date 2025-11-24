@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Route, Switch, useLocation } from 'wouter';
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -10,8 +11,9 @@ import HomeTab from "./pages/HomeTab";
 import SecretSantaTab from "./pages/SecretSantaTab";
 import RandomizersTab from "./pages/RandomizersTab";
 import ProfileTab from "./pages/ProfileTab";
+import PublicWishlist from "./pages/PublicWishlist";
 
-function App() {
+function MainApp() {
   const [activeTab, setActiveTab] = useState('home');
 
   const renderActiveTab = () => {
@@ -30,18 +32,31 @@ function App() {
   };
 
   return (
+    <div className="min-h-screen bg-background text-foreground">
+      <main className="max-w-lg mx-auto">
+        {renderActiveTab()}
+      </main>
+      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+    </div>
+  );
+}
+
+function App() {
+  return (
     <ErrorBoundary>
       <TelegramProvider>
         <ThemeProvider defaultTheme="light">
           <LanguageProvider>
             <TooltipProvider>
               <Toaster />
-              <div className="min-h-screen bg-background text-foreground">
-                <main className="max-w-lg mx-auto">
-                  {renderActiveTab()}
-                </main>
-                <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
-              </div>
+              <Switch>
+                <Route path="/wishlist/:userId">
+                  {(params) => <PublicWishlist userId={parseInt(params.userId)} />}
+                </Route>
+                <Route path="/">
+                  <MainApp />
+                </Route>
+              </Switch>
             </TooltipProvider>
           </LanguageProvider>
         </ThemeProvider>

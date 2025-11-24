@@ -187,6 +187,15 @@ export const appRouter = router({
         return { success: true };
       }),
 
+    // Get public wishlist by user ID
+    getPublicWishlist: publicProcedure
+      .input(z.object({ userId: z.number() }))
+      .query(async ({ input }) => {
+        const wishlist = await db.getUserWishlist(input.userId);
+        // Filter only public items
+        return wishlist.filter(item => item.privacy === 'all');
+      }),
+
     // Upload image
     uploadImage: protectedProcedure
       .input(z.object({

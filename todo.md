@@ -123,3 +123,11 @@
 - [x] Add image size validation (5MB limit) for wishlist uploads
   - [x] Frontend validation (in API)
   - [x] Backend validation
+
+## Wishlist Sharing Feature
+- [x] Add API endpoint for viewing public wishlist by user ID
+- [x] Create public wishlist view page component
+- [x] Add "Share Wishlist" button in Profile tab
+- [x] Generate shareable link with user ID
+- [x] Add route for public wishlist viewing
+- [x] Test wishlist sharing functionality

@@ -70,8 +70,23 @@ export const translations = {
       settings: 'Settings',
       language: 'Language',
       shareReferral: 'Share Referral Link',
+      shareWishlist: 'Share My Wishlist',
+      wishlistLinkCopied: 'Wishlist link copied to clipboard!',
       linkCopied: 'Referral link copied to clipboard!',
       noWishlist: 'Your wishlist is empty. Add your first item!',
+    },
+    // Public Wishlist
+    wishlist: {
+      title: 'Wishlist',
+      user: 'User',
+      loading: 'Loading wishlist...',
+      error: 'Failed to load wishlist',
+      goHome: 'Go to Home',
+      empty: 'No items yet',
+      emptyDesc: 'This user hasn\'t added any items to their wishlist yet',
+      public: 'Public',
+      createYourOwn: 'Want to create your own wishlist?',
+      startBot: 'Start Secret Santa Bot',
     },
     // Common
     common: {
@@ -151,8 +166,23 @@ export const translations = {
       settings: 'Настройки',
       language: 'Язык',
       shareReferral: 'Поделиться Реферальной Ссылкой',
+      shareWishlist: 'Поделиться Списком Желаний',
+      wishlistLinkCopied: 'Ссылка на список желаний скопирована!',
       linkCopied: 'Реферальная ссылка скопирована в буфер обмена!',
       noWishlist: 'Ваш список желаний пуст. Добавьте первый предмет!',
+    },
+    // Public Wishlist
+    wishlist: {
+      title: 'Список Желаний',
+      user: 'Пользователь',
+      loading: 'Загрузка списка желаний...',
+      error: 'Не удалось загрузить список желаний',
+      goHome: 'На Главную',
+      empty: 'Пока нет предметов',
+      emptyDesc: 'Этот пользователь ещё не добавил предметы в свой список желаний',
+      public: 'Публичный',
+      createYourOwn: 'Хотите создать свой список желаний?',
+      startBot: 'Запустить Бота Secret Santa',
     },
     // Common
     common: {
