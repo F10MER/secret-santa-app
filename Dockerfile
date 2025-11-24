@@ -34,11 +34,19 @@ RUN npm install -g pnpm && \
 COPY package.json pnpm-lock.yaml ./
 COPY patches ./patches
 
-# Install production dependencies only
-RUN pnpm install --prod --frozen-lockfile
+# Install all dependencies (including tsx for runtime)
+RUN pnpm install --frozen-lockfile
+
+# Explicitly install tsx to ensure it's available
+RUN pnpm add tsx
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
+
+# Copy source files for tsx runtime
+COPY server ./server
+COPY shared ./shared
+COPY tsconfig.json tsconfig.prod.json ./
 
 # Copy drizzle files for migrations
 COPY drizzle ./drizzle

@@ -78,36 +78,15 @@ This guide explains how to deploy the Secret Santa application to Easypanel.
 
 ## Database Setup
 
-The `docker-compose.yml` automatically creates a PostgreSQL database.
+The `docker-compose.yml` automatically creates a PostgreSQL database. The application will run migrations on startup.
 
-**IMPORTANT:** Migrations must be run manually ONCE after first deployment.
-
-### Run Migrations (Required - ONE TIME ONLY)
-
-After first deployment, run migrations:
-
-**Via Easypanel Console:**
-```bash
-cd /app
-pnpm install drizzle-kit --save-dev
-pnpm db:push
-```
-
-**Via Docker exec:**
-```bash
-docker exec -it <container-name> sh
-cd /app
-pnpm install drizzle-kit --save-dev
-pnpm db:push
-```
-
-### Verify Database Tables
+### Manual Database Setup (if needed)
 
 ```bash
 # Connect to database
 docker exec -it secret-santa-db psql -U secret_santa_user -d secret_santa
 
-# Check tables (should see: users, santa_events, event_participants, etc.)
+# Check tables
 \dt
 
 # Exit
