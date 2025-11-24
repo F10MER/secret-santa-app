@@ -3,6 +3,11 @@
 # Stage 1: Build
 FROM node:22-alpine AS builder
 
+# Build arguments for Vite environment variables
+ARG VITE_APP_URL
+ARG VITE_APP_TITLE="Secret Santa"
+ARG VITE_APP_LOGO="/logo.svg"
+
 WORKDIR /app
 
 # Install pnpm
@@ -17,6 +22,11 @@ RUN pnpm install --frozen-lockfile
 
 # Copy source code
 COPY . .
+
+# Set environment variables for build
+ENV VITE_APP_URL=${VITE_APP_URL}
+ENV VITE_APP_TITLE=${VITE_APP_TITLE}
+ENV VITE_APP_LOGO=${VITE_APP_LOGO}
 
 # Build the application
 RUN pnpm build
