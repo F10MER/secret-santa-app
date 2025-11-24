@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { TelegramProvider } from "./contexts/TelegramContext";
 import { BottomNav } from "./components/BottomNav";
 import HomeTab from "./pages/HomeTab";
 import SecretSantaTab from "./pages/SecretSantaTab";
@@ -30,19 +31,21 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="light">
-        <LanguageProvider>
-          <TooltipProvider>
-            <Toaster />
-            <div className="min-h-screen bg-background text-foreground">
-              <main className="max-w-lg mx-auto">
-                {renderActiveTab()}
-              </main>
-              <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
-            </div>
-          </TooltipProvider>
-        </LanguageProvider>
-      </ThemeProvider>
+      <TelegramProvider>
+        <ThemeProvider defaultTheme="light">
+          <LanguageProvider>
+            <TooltipProvider>
+              <Toaster />
+              <div className="min-h-screen bg-background text-foreground">
+                <main className="max-w-lg mx-auto">
+                  {renderActiveTab()}
+                </main>
+                <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+              </div>
+            </TooltipProvider>
+          </LanguageProvider>
+        </ThemeProvider>
+      </TelegramProvider>
     </ErrorBoundary>
   );
 }

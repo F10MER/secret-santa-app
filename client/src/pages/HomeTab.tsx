@@ -1,7 +1,7 @@
-import React from 'react';
 import { Card } from '@/components/ui/card';
 import { GiftIcon, BrainIcon, TrophyIcon } from '../components/Icons';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTelegram } from '../contexts/TelegramContext';
 import { MOCK_USER } from '../constants';
 
 interface HomeTabProps {
@@ -10,17 +10,22 @@ interface HomeTabProps {
 
 export default function HomeTab({ onNavigate }: HomeTabProps) {
   const { t } = useLanguage();
+  const { user: tgUser } = useTelegram();
+  
+  // Use Telegram user name if available, otherwise fallback to mock
+  const displayName = tgUser?.firstName || MOCK_USER.name.split(' ')[0];
+  const points = MOCK_USER.points; // TODO: Fetch from API
 
   return (
     <div className="pb-20 px-4 pt-6 animate-fade-in">
       {/* Greeting Section */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">
-          {t.home.greeting}, {MOCK_USER.name.split(' ')[0]}! 👋
+          {t.home.greeting}, {displayName}! 👋
         </h1>
         <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-full shadow-lg">
           <span className="text-lg font-semibold">{t.home.bonusPoints}</span>
-          <span className="text-2xl font-bold">{MOCK_USER.points}</span>
+          <span className="text-2xl font-bold">{points}</span>
         </div>
       </div>
 

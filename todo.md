@@ -89,3 +89,37 @@
   - [x] "Запустить рулетку" button
 - [x] Update navigation icons and labels
 - [x] Update i18n translations for randomizers
+
+## Backend Integration
+- [x] Add web-db-user feature (server + database + auth)
+- [x] Design database schema
+  - [x] Users table
+  - [x] SantaEvents table
+  - [x] EventParticipants table
+  - [x] Assignments table
+  - [x] Wishlist table
+  - [x] RandomizerHistory table
+- [x] Create API endpoints
+  - [x] User authentication via Telegram
+  - [x] Secret Santa CRUD operations
+  - [x] Participant management
+  - [x] Name drawing algorithm
+  - [x] Wishlist CRUD operations
+  - [x] Leaderboard queries
+  - [x] Randomizer history storage
+- [x] Set up Telegram bot (using grammy)
+  - [x] Bot initialization
+  - [x] Notification handlers
+  - [x] Command handlers (/start, /help, /stats)
+  - [x] WebApp button integration
+- [ ] Frontend integration
+  - [x] Add Telegram WebApp SDK
+  - [ ] Replace local state with API calls (IN PROGRESS)
+  - [ ] Add authentication flow
+  - [ ] Add loading states
+  - [ ] Add error handling
+
+## Additional Requirements
+- [x] Add image size validation (5MB limit) for wishlist uploads
+  - [x] Frontend validation (in API)
+  - [x] Backend validation
