@@ -1,1 +1,0 @@
-ALTER TABLE `wishlist_reservations` ADD `deadline` timestamp;

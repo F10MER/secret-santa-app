@@ -1,22 +1,28 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, bigint } from "drizzle-orm/mysql-core";
+import { integer, pgEnum, pgTable, text, timestamp, varchar, boolean, bigint } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+
+// Enums
+export const roleEnum = pgEnum("role", ["user", "admin"]);
+export const statusEnum = pgEnum("status", ["created", "assigned"]);
+export const privacyEnum = pgEnum("privacy", ["all", "friends"]);
+export const randomizerTypeEnum = pgEnum("randomizer_type", ["dice", "roulette"]);
 
 /**
  * Core user table backing auth flow.
  */
-export const users = mysqlTable("users", {
-  id: int("id").autoincrement().primaryKey(),
+export const users = pgTable("users", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   telegramId: bigint("telegramId", { mode: "number" }).unique(),
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
-  points: int("points").default(0).notNull(),
+  role: roleEnum("role").default("user").notNull(),
+  points: integer("points").default(0).notNull(),
   referralCode: varchar("referralCode", { length: 32 }).unique(),
-  referredBy: int("referredBy"),
+  referredBy: integer("referredBy"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
 });
 
@@ -26,16 +32,16 @@ export type InsertUser = typeof users.$inferInsert;
 /**
  * Secret Santa Events
  */
-export const santaEvents = mysqlTable("santa_events", {
-  id: int("id").autoincrement().primaryKey(),
-  creatorId: int("creatorId").notNull(),
+export const santaEvents = pgTable("santa_events", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  creatorId: integer("creatorId").notNull(),
   name: varchar("name", { length: 255 }).notNull(),
-  minBudget: int("minBudget"),
-  maxBudget: int("maxBudget"),
+  minBudget: integer("minBudget"),
+  maxBudget: integer("maxBudget"),
   eventDate: timestamp("eventDate"),
-  status: mysqlEnum("status", ["created", "assigned"]).default("created").notNull(),
+  status: statusEnum("status").default("created").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export type SantaEvent = typeof santaEvents.$inferSelect;
@@ -44,10 +50,10 @@ export type InsertSantaEvent = typeof santaEvents.$inferInsert;
 /**
  * Event Participants
  */
-export const eventParticipants = mysqlTable("event_participants", {
-  id: int("id").autoincrement().primaryKey(),
-  eventId: int("eventId").notNull(),
-  userId: int("userId"),
+export const eventParticipants = pgTable("event_participants", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  eventId: integer("eventId").notNull(),
+  userId: integer("userId"),
   name: varchar("name", { length: 255 }).notNull(),
   isMockUser: boolean("isMockUser").default(false).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -59,11 +65,11 @@ export type InsertEventParticipant = typeof eventParticipants.$inferInsert;
 /**
  * Secret Santa Assignments
  */
-export const santaAssignments = mysqlTable("santa_assignments", {
-  id: int("id").autoincrement().primaryKey(),
-  eventId: int("eventId").notNull(),
-  giverId: int("giverId").notNull(),
-  receiverId: int("receiverId").notNull(),
+export const santaAssignments = pgTable("santa_assignments", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  eventId: integer("eventId").notNull(),
+  giverId: integer("giverId").notNull(),
+  receiverId: integer("receiverId").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -73,15 +79,15 @@ export type InsertSantaAssignment = typeof santaAssignments.$inferInsert;
 /**
  * Wishlist Items
  */
-export const wishlistItems = mysqlTable("wishlist_items", {
-  id: int("id").autoincrement().primaryKey(),
-  userId: int("userId").notNull(),
+export const wishlistItems = pgTable("wishlist_items", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer("userId").notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   imageUrl: text("imageUrl"),
-  privacy: mysqlEnum("privacy", ["all", "friends"]).default("all").notNull(),
+  privacy: privacyEnum("privacy").default("all").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export type WishlistItem = typeof wishlistItems.$inferSelect;
@@ -90,10 +96,10 @@ export type InsertWishlistItem = typeof wishlistItems.$inferInsert;
 /**
  * Randomizer History (Dice & Roulette)
  */
-export const randomizerHistory = mysqlTable("randomizer_history", {
-  id: int("id").autoincrement().primaryKey(),
-  userId: int("userId").notNull(),
-  type: mysqlEnum("type", ["dice", "roulette"]).notNull(),
+export const randomizerHistory = pgTable("randomizer_history", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer("userId").notNull(),
+  type: randomizerTypeEnum("type").notNull(),
   result: text("result").notNull(), // JSON string with results
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
@@ -104,10 +110,10 @@ export type InsertRandomizerHistory = typeof randomizerHistory.$inferInsert;
 /**
  * Wishlist Item Reservations (for gift booking)
  */
-export const wishlistReservations = mysqlTable("wishlist_reservations", {
-  id: int("id").autoincrement().primaryKey(),
-  wishlistItemId: int("wishlistItemId").notNull(),
-  reservedBy: int("reservedBy").notNull(), // User ID who reserved
+export const wishlistReservations = pgTable("wishlist_reservations", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  wishlistItemId: integer("wishlistItemId").notNull(),
+  reservedBy: integer("reservedBy").notNull(), // User ID who reserved
   deadline: timestamp("deadline"), // Optional deadline for gift preparation
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
