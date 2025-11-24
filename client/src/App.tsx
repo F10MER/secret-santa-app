@@ -10,6 +10,7 @@ import { BottomNav } from "./components/BottomNav";
 import HomeTab from "./pages/HomeTab";
 import SecretSantaTab from "./pages/SecretSantaTab";
 import RandomizersTab from "./pages/RandomizersTab";
+import CalendarTab from "./pages/CalendarTab";
 import ProfileTab from "./pages/ProfileTab";
 import PublicWishlist from "./pages/PublicWishlist";
 
@@ -24,6 +25,8 @@ function MainApp() {
         return <SecretSantaTab />;
       case 'randomizers':
         return <RandomizersTab />;
+      case 'calendar':
+        return <CalendarTab />;
       case 'profile':
         return <ProfileTab />;
       default:

@@ -158,3 +158,15 @@
 - [x] Display deadline with urgency indicators (upcoming, today, overdue)
 - [x] Sort reservations by deadline (soonest first)
 - [x] Add translations for deadline labels and urgency states
+
+## Calendar Page
+- [x] Create Calendar tab component with monthly view
+- [x] Display reservation deadlines on calendar
+- [x] Display Secret Santa events on calendar
+- [x] Add color coding for different event types
+- [x] Add date click handler to show event details
+- [x] Add month navigation (prev/next)
+- [x] Add legend explaining color codes
+- [x] Add Calendar tab to bottom navigation (5th tab)
+- [x] Update BottomNav to support 5 tabs
+- [x] Add calendar translations (EN/RU)

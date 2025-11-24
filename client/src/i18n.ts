@@ -116,6 +116,24 @@ export const translations = {
       gifts: 'gifts',
       reserved: 'reserved',
     },
+    // Calendar
+    calendar: {
+      title: 'Calendar',
+      today: 'Today',
+      legend: 'Legend',
+      deadlines: 'Gift Deadlines',
+      events: 'Secret Santa Events',
+      noEvents: 'No events on this date',
+      summary: 'Summary',
+      totalDeadlines: 'Total Deadlines',
+      totalEvents: 'Total Events',
+      giftFor: 'Gift for',
+      currency: '$',
+      deadline: 'Deadline',
+      event: 'Event',
+      months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    },
     // Common
     common: {
       cancel: 'Cancel',
@@ -239,6 +257,24 @@ export const translations = {
       gift: 'подарок',
       gifts: 'подарков',
       reserved: 'забронировано',
+    },
+    // Calendar
+    calendar: {
+      title: 'Календарь',
+      today: 'Сегодня',
+      legend: 'Легенда',
+      deadlines: 'Дедлайны Подарков',
+      events: 'События Тайного Санты',
+      noEvents: 'Нет событий на эту дату',
+      summary: 'Сводка',
+      totalDeadlines: 'Всего Дедлайнов',
+      totalEvents: 'Всего Событий',
+      giftFor: 'Подарок для',
+      currency: '₽',
+      deadline: 'Дедлайн',
+      event: 'Событие',
+      months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+      dayNames: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
     },
     // Common
     common: {

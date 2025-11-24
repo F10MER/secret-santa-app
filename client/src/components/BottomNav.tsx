@@ -1,5 +1,5 @@
 import React from 'react';
-import { HomeIcon, GiftIcon, BrainIcon, UserIcon } from './Icons';
+import { HomeIcon, GiftIcon, BrainIcon, UserIcon, CalendarIcon } from './Icons';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface BottomNavProps {
@@ -14,6 +14,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
     { id: 'home', label: t.nav.home, icon: HomeIcon },
     { id: 'santa', label: t.nav.secretSanta, icon: GiftIcon },
     { id: 'randomizers', label: t.nav.randomizers, icon: BrainIcon },
+    { id: 'calendar', label: t.calendar.title, icon: CalendarIcon },
     { id: 'profile', label: t.nav.profile, icon: UserIcon },
   ];
 
