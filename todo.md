@@ -179,3 +179,12 @@
 - [x] Handle timezone conversion for events
 - [x] Add translations for export buttons (EN/RU)
 - [ ] Test export with Google Calendar and Apple Calendar
+
+## New User-Requested Improvements (Nov 25, 2024)
+- [x] Fix profile display - show real Telegram name instead of "Alex Johnson"
+- [ ] Add profile editing functionality (name, avatar, etc.)
+- [x] Make roulette participant names editable (replace "Участник 1, 2, 3")
+- [ ] Implement Secret Santa invite link system with event ID
+- [x] Set Russian as default language
+- [x] Add theme switcher button (light/dark mode)
+- [x] Add user avatar on home page greeting

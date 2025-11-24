@@ -15,14 +15,27 @@ export default function HomeTab({ onNavigate }: HomeTabProps) {
   // Use Telegram user name if available, otherwise fallback to mock
   const displayName = tgUser?.firstName || MOCK_USER.name.split(' ')[0];
   const points = MOCK_USER.points; // TODO: Fetch from API
+  
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase();
+  };
 
   return (
     <div className="pb-20 px-4 pt-6 animate-fade-in">
       {/* Greeting Section */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">
-          {t.home.greeting}, {displayName}! 👋
-        </h1>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-lg">
+            {getInitials(displayName)}
+          </div>
+          <h1 className="text-3xl font-bold">
+            {t.home.greeting}, {displayName}! 👋
+          </h1>
+        </div>
         <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-full shadow-lg">
           <span className="text-lg font-semibold">{t.home.bonusPoints}</span>
           <span className="text-2xl font-bold">{points}</span>

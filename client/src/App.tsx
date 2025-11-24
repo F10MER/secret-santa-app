@@ -48,7 +48,7 @@ function App() {
   return (
     <ErrorBoundary>
       <TelegramProvider>
-        <ThemeProvider defaultTheme="light">
+        <ThemeProvider defaultTheme="light" switchable>
           <LanguageProvider>
             <TooltipProvider>
               <Toaster />

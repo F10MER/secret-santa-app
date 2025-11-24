@@ -9,6 +9,8 @@ export function Roulette() {
   const { t } = useLanguage();
   const [participants, setParticipants] = useState<string[]>(['Участник 1', 'Участник 2', 'Участник 3']);
   const [newParticipant, setNewParticipant] = useState('');
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingValue, setEditingValue] = useState('');
   const [isSpinning, setIsSpinning] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
   const [rotation, setRotation] = useState(0);
@@ -30,6 +32,26 @@ export function Roulette() {
     if (participants.length > 3) {
       setParticipants(participants.filter((_, i) => i !== index));
     }
+  };
+
+  const startEditing = (index: number) => {
+    setEditingIndex(index);
+    setEditingValue(participants[index]);
+  };
+
+  const saveEdit = (index: number) => {
+    if (editingValue.trim()) {
+      const newParticipants = [...participants];
+      newParticipants[index] = editingValue.trim();
+      setParticipants(newParticipants);
+    }
+    setEditingIndex(null);
+    setEditingValue('');
+  };
+
+  const cancelEdit = () => {
+    setEditingIndex(null);
+    setEditingValue('');
   };
 
   const drawWheel = (currentRotation: number = 0) => {
@@ -167,7 +189,28 @@ export function Roulette() {
               key={index}
               className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm flex items-center gap-2"
             >
-              {participant}
+              {editingIndex === index ? (
+                <input
+                  type="text"
+                  value={editingValue}
+                  onChange={(e) => setEditingValue(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') saveEdit(index);
+                    if (e.key === 'Escape') cancelEdit();
+                  }}
+                  onBlur={() => saveEdit(index)}
+                  className="bg-background text-foreground px-2 py-0 rounded w-24 text-sm"
+                  autoFocus
+                />
+              ) : (
+                <span
+                  onClick={() => startEditing(index)}
+                  className="cursor-pointer hover:opacity-80"
+                  title="Кликните чтобы редактировать"
+                >
+                  {participant}
+                </span>
+              )}
               {participants.length > 3 && (
                 <button
                   onClick={() => removeParticipant(index)}

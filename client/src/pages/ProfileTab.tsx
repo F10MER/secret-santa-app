@@ -12,6 +12,8 @@ import {
   GiftIcon,
 } from '../components/Icons';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTelegram } from '../contexts/TelegramContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { MOCK_USER, MOCK_LEADERBOARD } from '../constants';
 import { WishlistItem } from '../types';
 import { toast } from 'sonner';
@@ -19,6 +21,19 @@ import MyReservations from './MyReservations';
 
 export default function ProfileTab() {
   const { t, language, setLanguage } = useLanguage();
+  const { user: telegramUser } = useTelegram();
+  const { theme, toggleTheme } = useTheme();
+  
+  // Use real Telegram user data if available, fallback to MOCK_USER
+  const user = telegramUser
+    ? {
+        id: telegramUser.id.toString(),
+        name: `${telegramUser.firstName}${telegramUser.lastName ? ' ' + telegramUser.lastName : ''}`,
+        level: MOCK_USER.level,
+        points: MOCK_USER.points,
+        referrals: MOCK_USER.referrals,
+      }
+    : MOCK_USER;
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showMyReservations, setShowMyReservations] = useState(false);
   const [wishlistPrivacy, setWishlistPrivacy] = useState<'all' | 'friends'>('all');
@@ -53,13 +68,13 @@ export default function ProfileTab() {
   };
 
   const handleShareReferral = () => {
-    const referralLink = `https://t.me/SecretSantaBot?start=${MOCK_USER.id}`;
+    const referralLink = `https://t.me/SecretSantaBot?start=${user.id}`;
     navigator.clipboard.writeText(referralLink);
     toast.success(t.profile.linkCopied);
   };
 
   const handleShareWishlist = () => {
-    const wishlistLink = `${window.location.origin}/wishlist/${MOCK_USER.id}?name=${encodeURIComponent(MOCK_USER.name)}`;
+    const wishlistLink = `${window.location.origin}/wishlist/${user.id}?name=${encodeURIComponent(user.name)}`;
     navigator.clipboard.writeText(wishlistLink);
     toast.success(t.profile.wishlistLinkCopied);
   };
@@ -93,7 +108,7 @@ export default function ProfileTab() {
             <Card
               key={entry.id}
               className={`p-4 stagger-item ${
-                entry.id === MOCK_USER.id ? 'ring-2 ring-primary bg-primary/5' : ''
+                entry.id === user.id ? 'ring-2 ring-primary bg-primary/5' : ''
               }`}
               style={{ animationDelay: `${index * 0.05}s` }}
             >
@@ -115,7 +130,7 @@ export default function ProfileTab() {
                 <div className="flex-1">
                   <p className="font-bold">
                     {entry.name}
-                    {entry.id === MOCK_USER.id && (
+                    {entry.id === user.id && (
                       <span className="ml-2 text-xs text-primary">({t.profile.you})</span>
                     )}
                   </p>
@@ -140,19 +155,19 @@ export default function ProfileTab() {
       <Card className="p-6 mb-6 bg-gradient-to-br from-blue-500 to-purple-600 text-white">
         <div className="flex items-start gap-4">
           <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-2xl font-bold">
-            {getInitials(MOCK_USER.name)}
+            {getInitials(user.name)}
           </div>
           <div className="flex-1">
-            <h2 className="text-2xl font-bold mb-1">{MOCK_USER.name}</h2>
-            <p className="text-white/90 mb-3">{MOCK_USER.level}</p>
+            <h2 className="text-2xl font-bold mb-1">{user.name}</h2>
+            <p className="text-white/90 mb-3">{user.level}</p>
             <div className="flex gap-4">
               <div>
                 <p className="text-sm text-white/80">{t.profile.referrals}</p>
-                <p className="text-xl font-bold">{MOCK_USER.referrals}</p>
+                <p className="text-xl font-bold">{user.referrals}</p>
               </div>
               <div>
                 <p className="text-sm text-white/80">{t.profile.points}</p>
-                <p className="text-xl font-bold">{MOCK_USER.points}</p>
+                <p className="text-xl font-bold">{user.points}</p>
               </div>
             </div>
           </div>
@@ -255,6 +270,24 @@ export default function ProfileTab() {
       {/* Settings Section */}
       <SectionTitle>{t.profile.settings}</SectionTitle>
 
+      {/* Theme Switcher */}
+      {toggleTheme && (
+        <Card className="p-4 mb-4">
+          <div className="flex items-center justify-between">
+            <span className="font-medium">{language === 'ru' ? 'Тема' : 'Theme'}</span>
+            <div className="flex gap-2">
+              <button
+                onClick={toggleTheme}
+                className="px-4 py-2 rounded bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                {theme === 'light' ? '🌙' : '☀️'} {theme === 'light' ? (language === 'ru' ? 'Тёмная' : 'Dark') : (language === 'ru' ? 'Светлая' : 'Light')}
+              </button>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* Language Switcher */}
       <Card className="p-4 mb-4">
         <div className="flex items-center justify-between">
           <span className="font-medium">{t.profile.language}</span>
