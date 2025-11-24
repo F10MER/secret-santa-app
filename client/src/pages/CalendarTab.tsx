@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { SectionTitle } from '../components/SectionTitle';
 import { useLanguage } from '../contexts/LanguageContext';
 import { trpc } from '@/lib/trpc';
+import { exportAllEvents, exportSingleEvent } from '@/lib/ical';
+import { toast } from 'sonner';
 
 interface CalendarEvent {
   id: number;
@@ -103,6 +105,31 @@ export default function CalendarTab() {
   const dayNames = t.calendar.dayNames || ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   const selectedDateEvents = selectedDate ? getEventsForDate(selectedDate) : [];
+
+  // Export handler
+  const handleExportAll = () => {
+    const icalEvents = calendarEvents.map(event => ({
+      id: `${event.type}-${event.id}`,
+      title: event.title,
+      description: event.description,
+      startDate: new Date(event.date),
+    }));
+    
+    exportAllEvents(icalEvents);
+    toast.success(t.calendar.exportSuccess || 'Calendar exported successfully!');
+  };
+
+  const handleExportSingle = (event: CalendarEvent) => {
+    const icalEvent = {
+      id: `${event.type}-${event.id}`,
+      title: event.title,
+      description: event.description,
+      startDate: new Date(event.date),
+    };
+    
+    exportSingleEvent(icalEvent);
+    toast.success(t.calendar.exportSuccess || 'Event exported successfully!');
+  };
 
   return (
     <div className="pb-20 px-4 pt-6 animate-fade-in">
@@ -260,6 +287,16 @@ export default function CalendarTab() {
             </span>
           </div>
         </div>
+        
+        {/* Export Button */}
+        {calendarEvents.length > 0 && (
+          <Button 
+            onClick={handleExportAll} 
+            className="w-full mt-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+          >
+            📥 {t.calendar.exportAll || 'Export All to Calendar'}
+          </Button>
+        )}
       </Card>
     </div>
   );

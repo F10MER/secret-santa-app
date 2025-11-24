@@ -170,3 +170,12 @@
 - [x] Add Calendar tab to bottom navigation (5th tab)
 - [x] Update BottomNav to support 5 tabs
 - [x] Add calendar translations (EN/RU)
+
+## Calendar Export Feature
+- [x] Create iCal/ICS file generation utility
+- [x] Add "Export All Events" button to calendar page
+- [x] Add "Export" button for individual events
+- [x] Generate proper iCal format with event details
+- [x] Handle timezone conversion for events
+- [x] Add translations for export buttons (EN/RU)
+- [ ] Test export with Google Calendar and Apple Calendar

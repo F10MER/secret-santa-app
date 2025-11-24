@@ -133,6 +133,8 @@ export const translations = {
       event: 'Event',
       months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      exportAll: 'Export All to Calendar',
+      exportSuccess: 'Calendar exported successfully!',
     },
     // Common
     common: {
@@ -275,6 +277,8 @@ export const translations = {
       event: 'Событие',
       months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
       dayNames: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+      exportAll: 'Экспортировать Всё в Календарь',
+      exportSuccess: 'Календарь успешно экспортирован!',
     },
     // Common
     common: {
