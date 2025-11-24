@@ -31,6 +31,10 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 async function startServer() {
   const app = express();
   const server = createServer(app);
+  
+  // Initialize Telegram bot FIRST (before registering webhook endpoint)
+  initBot();
+  
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
@@ -45,7 +49,7 @@ async function startServer() {
     })
   );
 
-  // Telegram webhook endpoint
+  // Telegram webhook endpoint (bot must be initialized first)
   if (process.env.NODE_ENV === "production" && process.env.TELEGRAM_BOT_TOKEN) {
     try {
       const webhookHandler = getBotWebhookHandler();
@@ -72,9 +76,6 @@ async function startServer() {
 
   server.listen(port, async () => {
     console.log(`Server running on http://localhost:${port}/`);
-    
-    // Initialize Telegram bot
-    initBot();
 
     // Setup webhook in production
     if (process.env.NODE_ENV === "production" && process.env.WEBHOOK_URL) {
