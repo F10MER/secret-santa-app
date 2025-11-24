@@ -150,3 +150,11 @@
 - [x] Add navigation button in Profile tab
 - [x] Add translations for My Reservations page
 - [x] Test My Reservations functionality
+
+## Deadline Date for Reservations
+- [x] Add deadline date field to wishlist_reservations table
+- [x] Create API endpoint to set/update reservation deadline
+- [x] Add date picker UI in MyReservations page
+- [x] Display deadline with urgency indicators (upcoming, today, overdue)
+- [x] Sort reservations by deadline (soonest first)
+- [x] Add translations for deadline labels and urgency states

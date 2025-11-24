@@ -22,6 +22,13 @@
       "when": 1763982626485,
       "tag": "0002_late_hiroim",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1763983181190,
+      "tag": "0003_tricky_human_torch",
+      "breakpoints": true
     }
   ]
 }

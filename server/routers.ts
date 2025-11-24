@@ -255,6 +255,17 @@ export const appRouter = router({
     getMyReservations: protectedProcedure.query(async ({ ctx }) => {
       return await db.getUserReservations(ctx.user.id);
     }),
+
+    // Update reservation deadline
+    updateDeadline: protectedProcedure
+      .input(z.object({
+        wishlistItemId: z.number(),
+        deadline: z.date().nullable(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await db.updateReservationDeadline(input.wishlistItemId, ctx.user.id, input.deadline);
+        return { success: true };
+      }),
   }),
 
   // Randomizers

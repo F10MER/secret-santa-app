@@ -324,6 +324,7 @@ export async function getUserReservations(userId: number) {
       id: wishlistReservations.id,
       wishlistItemId: wishlistReservations.wishlistItemId,
       reservedBy: wishlistReservations.reservedBy,
+      deadline: wishlistReservations.deadline,
       createdAt: wishlistReservations.createdAt,
       itemTitle: wishlistItems.title,
       itemDescription: wishlistItems.description,
@@ -334,7 +335,23 @@ export async function getUserReservations(userId: number) {
     .from(wishlistReservations)
     .leftJoin(wishlistItems, eq(wishlistReservations.wishlistItemId, wishlistItems.id))
     .leftJoin(users, eq(wishlistItems.userId, users.id))
-    .where(eq(wishlistReservations.reservedBy, userId));
+    .where(eq(wishlistReservations.reservedBy, userId))
+    .orderBy(sql`CASE WHEN ${wishlistReservations.deadline} IS NULL THEN 1 ELSE 0 END, ${wishlistReservations.deadline} ASC`);
 
   return reservations;
+}
+
+export async function updateReservationDeadline(wishlistItemId: number, userId: number, deadline: Date | null) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(wishlistReservations)
+    .set({ deadline })
+    .where(
+      and(
+        eq(wishlistReservations.wishlistItemId, wishlistItemId),
+        eq(wishlistReservations.reservedBy, userId)
+      )
+    );
 }

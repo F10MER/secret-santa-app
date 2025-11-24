@@ -108,6 +108,7 @@ export const wishlistReservations = mysqlTable("wishlist_reservations", {
   id: int("id").autoincrement().primaryKey(),
   wishlistItemId: int("wishlistItemId").notNull(),
   reservedBy: int("reservedBy").notNull(), // User ID who reserved
+  deadline: timestamp("deadline"), // Optional deadline for gift preparation
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
