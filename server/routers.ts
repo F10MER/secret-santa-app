@@ -6,8 +6,8 @@ import { z } from "zod";
 import * as db from "./db";
 import { storagePut } from "./storage";
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
-import { users } from "../drizzle/schema";
+import { eq, sql, and } from "drizzle-orm";
+import { users, userAchievements, friendships, santaEvents } from "../drizzle/schema";
 import { featuresRouter } from "./features-router";
 import { eventsRouter } from "./routers/events.js";
 
@@ -383,6 +383,80 @@ export const appRouter = router({
           result: JSON.parse(h.result),
         }));
       }),
+  }),
+
+  // Achievements
+  achievements: router({    
+    // Get user achievements
+    getMyAchievements: protectedProcedure.query(async ({ ctx }) => {
+      const database = await db.getDb();
+      if (!database) return [];
+      
+      const achievements = await database
+        .select()
+        .from(userAchievements)
+        .where(eq(userAchievements.userId, ctx.user.id));
+      
+      return achievements;
+    }),
+    
+    // Check and award achievements
+    checkAchievements: protectedProcedure.mutation(async ({ ctx }) => {
+      const database = await db.getDb();
+      if (!database) return { newAchievements: [] };
+      
+      const newAchievements: string[] = [];
+      
+      // Check first_event achievement
+      const eventsCount = await database
+        .select({ count: sql<number>`count(*)` })
+        .from(santaEvents)
+        .where(eq(santaEvents.creatorId, ctx.user.id));
+      
+      if (eventsCount[0]?.count >= 1) {
+        const hasAchievement = await database
+          .select()
+          .from(userAchievements)
+          .where(and(
+            eq(userAchievements.userId, ctx.user.id),
+            eq(userAchievements.achievementType, 'first_event')
+          ));
+        
+        if (hasAchievement.length === 0) {
+          await database.insert(userAchievements).values({
+            userId: ctx.user.id,
+            achievementType: 'first_event',
+          });
+          newAchievements.push('first_event');
+        }
+      }
+      
+      // Check five_friends achievement
+      const friendsCount = await database
+        .select({ count: sql<number>`count(*)` })
+        .from(friendships)
+        .where(eq(friendships.userId, ctx.user.id));
+      
+      if (friendsCount[0]?.count >= 5) {
+        const hasAchievement = await database
+          .select()
+          .from(userAchievements)
+          .where(and(
+            eq(userAchievements.userId, ctx.user.id),
+            eq(userAchievements.achievementType, 'five_gifts')
+          ));
+        
+        if (hasAchievement.length === 0) {
+          await database.insert(userAchievements).values({
+            userId: ctx.user.id,
+            achievementType: 'five_gifts',
+          });
+          newAchievements.push('five_gifts');
+        }
+      }
+      
+      return { newAchievements };
+    }),
   }),
 
   // Profile & Leaderboard

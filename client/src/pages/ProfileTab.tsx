@@ -28,13 +28,16 @@ export default function ProfileTab() {
   const { user: telegramUser } = useTelegram();
   const { theme, toggleTheme } = useTheme();
   
+  // Fetch current user data from API
+  const { data: currentUser } = trpc.auth.me.useQuery();
+  
   // Use real Telegram user data if available, fallback to MOCK_USER
   const user = telegramUser
     ? {
         id: telegramUser.id.toString(),
         name: `${telegramUser.firstName}${telegramUser.lastName ? ' ' + telegramUser.lastName : ''}`,
         level: MOCK_USER.level,
-        points: MOCK_USER.points,
+        points: currentUser?.points ?? MOCK_USER.points,
         referrals: MOCK_USER.referrals,
       }
     : MOCK_USER;

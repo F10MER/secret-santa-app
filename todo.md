@@ -398,3 +398,26 @@
 - [x] Need to check Telegram WebApp initData integration - added to tRPC headers
 - [x] Verify tRPC authentication middleware - added Telegram auth to context.ts
 - [ ] Fix hardcoded points (450) in UI - should show real points from DB
+
+## Fix Points Display (Nov 25, 2024)
+- [x] Remove hardcoded 450 points from UI
+- [x] Show real points from database (user.points)
+- [x] Add points display in profile tab
+- [x] Ensure points update correctly
+
+## Achievements System (Nov 25, 2024)
+- [x] Create achievements schema in database - already exists
+- [x] Define achievement types (first_event, 5_friends, 10_gifts, etc.)
+- [x] Backend API to check and award achievements
+- [x] Frontend: Display badges in profile - AchievementsBadges component created
+- [ ] Add achievement unlock animations
+- [ ] Show achievement progress (e.g., 3/5 friends)
+- [ ] Integrate AchievementsBadges into ProfileTab
+- [ ] Auto-check achievements after event creation
+
+## Results Export Feature (Nov 25, 2024)
+- [ ] Create "Share Results" button on event details
+- [ ] Generate image with event results (participants, assignments)
+- [ ] Use canvas or server-side image generation
+- [ ] Add Telegram share functionality
+- [ ] Include event name, date, and participant count in image

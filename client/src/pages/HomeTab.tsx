@@ -4,6 +4,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useTelegram } from '../contexts/TelegramContext';
 import { MOCK_USER } from '../constants';
 import { useState, useEffect } from 'react';
+import { trpc } from '../lib/trpc';
 
 interface HomeTabProps {
   onNavigate: (tab: string) => void;
@@ -13,9 +14,12 @@ export default function HomeTab({ onNavigate }: HomeTabProps) {
   const { t, language, setLanguage } = useLanguage();
   const { user: tgUser } = useTelegram();
   
+  // Fetch current user data
+  const { data: currentUser } = trpc.auth.me.useQuery();
+  
   // Use Telegram user name if available, otherwise fallback to mock
-  const displayName = tgUser?.firstName || MOCK_USER.name.split(' ')[0];
-  const points = MOCK_USER.points; // TODO: Fetch from API
+  const displayName = tgUser?.firstName || currentUser?.name?.split(' ')[0] || MOCK_USER.name.split(' ')[0];
+  const points = currentUser?.points ?? MOCK_USER.points;
   
   // Fetch user avatar
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
