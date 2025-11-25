@@ -27,13 +27,21 @@ export async function getDb() {
     try {
       // Parse DATABASE_URL to check if it requires SSL
       // Only use SSL if explicitly required in the connection string
-      // Internal Easypanel databases (10.0.x.x) don't need SSL
-      const dbUrl = process.env.DATABASE_URL;
+      // Internal Easypanel databases (10.0.x.x) don't support SSL
+      let dbUrl = process.env.DATABASE_URL;
       const isInternalDb = dbUrl.includes('10.0.') || dbUrl.includes('localhost') || dbUrl.includes('127.0.0.1');
-      const requiresSsl = dbUrl.includes('sslmode=require') && !isInternalDb;
+      
+      // For internal databases, explicitly disable SSL in the connection string
+      if (isInternalDb && !dbUrl.includes('sslmode=')) {
+        const separator = dbUrl.includes('?') ? '&' : '?';
+        dbUrl = `${dbUrl}${separator}sslmode=disable`;
+        console.log('[Database] Internal database detected, SSL disabled');
+      }
+      
+      const requiresSsl = dbUrl.includes('sslmode=require');
       
       _pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
+        connectionString: dbUrl,
         ssl: requiresSsl ? { rejectUnauthorized: false } : false,
         // Connection pool settings
         max: 10, // maximum number of clients

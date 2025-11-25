@@ -297,3 +297,9 @@
 - [x] Disable SSL for internal Easypanel database (10.0.x.x)
 - [x] Add error handling to all bot commands
 - [x] Add database connection test on startup
+
+## SSL Connection Error in Production (Nov 25, 2024)
+- [x] Error: "The server does not support SSL connections" still appears - fixed
+- [x] ssl: false setting not being applied in production - added sslmode=disable to URL
+- [x] Need to check if DATABASE_URL has sslmode parameter - auto-added if missing
+- [x] May need to explicitly add ?sslmode=disable to connection string - implemented
