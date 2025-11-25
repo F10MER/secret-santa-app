@@ -234,6 +234,31 @@ export async function getAssignmentForParticipant(eventId: number, giverId: numb
   return result.length > 0 ? result[0] : undefined;
 }
 
+export async function updateGiftStatus(
+  assignmentId: number,
+  data: {
+    status: string;
+    photoUrl?: string;
+    note?: string;
+    purchasedAt?: Date;
+    deliveredAt?: Date;
+  }
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(santaAssignments)
+    .set({
+      giftStatus: data.status,
+      giftPhotoUrl: data.photoUrl,
+      giftNote: data.note,
+      purchasedAt: data.purchasedAt,
+      deliveredAt: data.deliveredAt,
+    })
+    .where(eq(santaAssignments.id, assignmentId));
+}
+
 // Wishlist
 export async function createWishlistItem(item: InsertWishlistItem) {
   const db = await getDb();

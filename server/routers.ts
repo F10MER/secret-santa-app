@@ -161,7 +161,47 @@ export const appRouter = router({
 
         // Get receiver details
         const receiver = participants.find(p => p.id === assignment.receiverId);
-        return { receiver };
+        return { receiver, assignment };
+      }),
+
+    // Update gift status
+    updateGiftStatus: protectedProcedure
+      .input(z.object({
+        eventId: z.number(),
+        status: z.enum(["pending", "purchased", "delivered"]),
+        photoUrl: z.string().optional(),
+        note: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Find participant record for current user
+        const participants = await db.getEventParticipants(input.eventId);
+        const myParticipant = participants.find(p => p.userId === ctx.user.id);
+        
+        if (!myParticipant) {
+          throw new TRPCError({ 
+            code: "NOT_FOUND", 
+            message: "You are not a participant in this event" 
+          });
+        }
+
+        const assignment = await db.getAssignmentForParticipant(input.eventId, myParticipant.id);
+        if (!assignment) {
+          throw new TRPCError({ 
+            code: "NOT_FOUND", 
+            message: "No assignment found" 
+          });
+        }
+
+        // Update assignment with gift tracking info
+        await db.updateGiftStatus(assignment.id, {
+          status: input.status,
+          photoUrl: input.photoUrl,
+          note: input.note,
+          purchasedAt: input.status === "purchased" ? new Date() : undefined,
+          deliveredAt: input.status === "delivered" ? new Date() : undefined,
+        });
+
+        return { success: true };
       }),
   }),
 

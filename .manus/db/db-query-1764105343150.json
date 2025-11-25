@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE santa_assignments ADD COLUMN giftStatus varchar(20) DEFAULT 'pending';\nALTER TABLE santa_assignments ADD COLUMN giftPhotoUrl text;\nALTER TABLE santa_assignments ADD COLUMN giftNote text;\nALTER TABLE santa_assignments ADD COLUMN purchasedAt timestamp;\nALTER TABLE santa_assignments ADD COLUMN deliveredAt timestamp;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4MLmj7VnsLHs6bq.32afa1fdb4e4 --database JwRcUjv5PSirsVZ9cATS34 --execute ALTER TABLE santa_assignments ADD COLUMN giftStatus varchar(20) DEFAULT 'pending';\nALTER TABLE santa_assignments ADD COLUMN giftPhotoUrl text;\nALTER TABLE santa_assignments ADD COLUMN giftNote text;\nALTER TABLE santa_assignments ADD COLUMN purchasedAt timestamp;\nALTER TABLE santa_assignments ADD COLUMN deliveredAt timestamp;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2048
+}

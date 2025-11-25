@@ -480,6 +480,52 @@ export default function SecretSantaTab({ inviteCode, onInviteHandled }: SecretSa
                           </p>
                         </div>
                       )}
+
+                      {/* Gift Tracking */}
+                      <div className="bg-card border border-border p-4 rounded-lg">
+                        <h4 className="font-semibold mb-3">
+                          {language === 'ru' ? '📦 Статус подарка' : '📦 Gift Status'}
+                        </h4>
+                        <div className="space-y-3">
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant={myAssignment.assignment?.giftStatus === 'pending' ? 'default' : 'outline'}
+                              className="flex-1"
+                              onClick={() => {
+                                // TODO: Update gift status
+                              }}
+                            >
+                              {language === 'ru' ? 'В планах' : 'Pending'}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant={myAssignment.assignment?.giftStatus === 'purchased' ? 'default' : 'outline'}
+                              className="flex-1"
+                              onClick={() => {
+                                // TODO: Update gift status
+                              }}
+                            >
+                              {language === 'ru' ? 'Куплен' : 'Purchased'}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant={myAssignment.assignment?.giftStatus === 'delivered' ? 'default' : 'outline'}
+                              className="flex-1"
+                              onClick={() => {
+                                // TODO: Update gift status
+                              }}
+                            >
+                              {language === 'ru' ? 'Вручен' : 'Delivered'}
+                            </Button>
+                          </div>
+                          {myAssignment.assignment?.giftNote && (
+                            <div className="text-sm text-muted-foreground">
+                              <strong>{language === 'ru' ? 'Заметка:' : 'Note:'}</strong> {myAssignment.assignment.giftNote}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>

@@ -22,6 +22,13 @@
       "when": 1764102821104,
       "tag": "0002_wide_carlie_cooper",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1764105321842,
+      "tag": "0003_stale_vulture",
+      "breakpoints": true
     }
   ]
 }

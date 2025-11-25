@@ -13,10 +13,21 @@ import RandomizersTab from "./pages/RandomizersTab";
 import CalendarTab from "./pages/CalendarTab";
 import ProfileTab from "./pages/ProfileTab";
 import PublicWishlist from "./pages/PublicWishlist";
+import { WelcomeScreen } from "./components/WelcomeScreen";
 
 function MainApp() {
   const [activeTab, setActiveTab] = useState('home');
   const [inviteCode, setInviteCode] = useState<string | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    // Check if user has seen onboarding
+    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+    return !hasSeenOnboarding;
+  });
+
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('hasSeenOnboarding', 'true');
+    setShowOnboarding(false);
+  };
 
   // Check for invite code in URL on mount
   useEffect(() => {
@@ -47,11 +58,14 @@ function MainApp() {
     }
   };
 
+  // Show onboarding if user hasn't seen it
+  if (showOnboarding) {
+    return <WelcomeScreen onComplete={handleOnboardingComplete} />;
+  }
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <main className="max-w-lg mx-auto">
-        {renderActiveTab()}
-      </main>
+    <div className="min-h-screen bg-background">
+      {renderActiveTab()}
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );

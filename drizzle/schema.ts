@@ -87,6 +87,11 @@ export const santaAssignments = pgTable("santa_assignments", {
   eventId: integer("eventId").notNull(),
   giverId: integer("giverId").notNull(),
   receiverId: integer("receiverId").notNull(),
+  giftStatus: varchar("giftStatus", { length: 20 }).default("pending"),
+  giftPhotoUrl: text("giftPhotoUrl"),
+  giftNote: text("giftNote"),
+  purchasedAt: timestamp("purchasedAt"),
+  deliveredAt: timestamp("deliveredAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 

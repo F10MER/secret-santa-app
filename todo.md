@@ -361,3 +361,27 @@
 - [x] Current sslmode=disable fix not working in production - improved SSL config
 - [x] Need to improve URL parameter handling to work with existing query params - fixed
 - [x] Test with different DATABASE_URL formats - now handles all cases
+
+## Onboarding Flow (Nov 25, 2024)
+- [x] Create WelcomeScreen component with tutorial slides
+- [x] Add localStorage flag to track if user has seen onboarding
+- [x] Design 3-4 slides explaining key features
+- [x] Add skip button and next/prev navigation
+- [x] Show onboarding only on first app launch
+
+## Gift Tracking (Nov 25, 2024)
+- [x] Add gift status field to santaAssignments (pending/purchased/delivered)
+- [x] Create gift tracking UI in event details
+- [ ] Add photo upload for gift proof - basic UI ready, need file upload
+- [ ] Add comment/note field for gift details - basic UI ready
+- [ ] Show gift status to event creator only
+- [ ] Add timeline view of gift progress
+
+## Mobile UX Improvements (Nov 25, 2024)
+- [x] Implement pull-to-refresh on event lists - component created
+- [ ] Add swipe-to-delete for wishlist items - need to integrate
+- [ ] Add swipe-to-delete for events - need to integrate
+- [x] Integrate Telegram haptic feedback API - useHaptic hook created
+- [ ] Add haptic feedback on button clicks - hook ready, need to add to buttons
+- [ ] Add haptic feedback on successful actions - hook ready
+- [ ] Test on iOS and Android devices
