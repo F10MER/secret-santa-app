@@ -265,3 +265,9 @@
 - [ ] Trigger notification on Secret Santa draw completion
 - [ ] Trigger notification on event invitation
 - [ ] Add notification preferences UI
+
+
+## Bug Fixes (Nov 25, 2024)
+- [x] Fix avatar not displaying in home page
+- [x] Fix profile name showing random name instead of Telegram user name
+- [x] Ensure Telegram user data is properly loaded and displayed

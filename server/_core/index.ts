@@ -10,6 +10,7 @@ import { serveStatic } from "./static.js";
 import { initBot, getBotWebhookHandler, setupWebhook } from "../bot.js";
 import { validateTelegramWebAppData, generateAuthToken } from "../auth.js";
 import * as db from "../db.js";
+import { getTelegramAvatar } from "../telegram-avatar.js";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -75,6 +76,9 @@ async function startServer() {
       res.status(500).json({ error: "Authentication failed" });
     }
   });
+  
+  // Telegram avatar endpoint
+  app.get("/api/telegram-avatar/:userId", getTelegramAvatar);
   // tRPC API
   app.use(
     "/api/trpc",

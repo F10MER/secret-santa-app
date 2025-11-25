@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { SectionTitle } from '../components/SectionTitle';
@@ -37,6 +37,22 @@ export default function ProfileTab() {
         referrals: MOCK_USER.referrals,
       }
     : MOCK_USER;
+
+  // Fetch user avatar from Telegram
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (telegramUser) {
+      // Try to get avatar from backend API
+      fetch(`/api/telegram-avatar/${telegramUser.id}`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data?.avatarUrl) {
+            setAvatarUrl(data.avatarUrl);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [telegramUser]);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showMyReservations, setShowMyReservations] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
@@ -161,9 +177,17 @@ export default function ProfileTab() {
       {/* User Header */}
       <Card className="p-6 mb-6 bg-gradient-to-br from-blue-500 to-purple-600 text-white">
         <div className="flex items-start gap-4">
-          <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-2xl font-bold">
-            {getInitials(user.name)}
-          </div>
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={user.name}
+              className="w-20 h-20 rounded-full object-cover border-4 border-white/20"
+            />
+          ) : (
+            <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-2xl font-bold">
+              {getInitials(user.name)}
+            </div>
+          )}
           <div className="flex-1">
             <h2 className="text-2xl font-bold mb-1">{user.name}</h2>
             <p className="text-white/90 mb-3">{user.level}</p>

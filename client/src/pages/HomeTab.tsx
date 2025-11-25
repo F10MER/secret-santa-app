@@ -3,6 +3,7 @@ import { GiftIcon, BrainIcon, TrophyIcon } from '../components/Icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTelegram } from '../contexts/TelegramContext';
 import { MOCK_USER } from '../constants';
+import { useState, useEffect } from 'react';
 
 interface HomeTabProps {
   onNavigate: (tab: string) => void;
@@ -15,6 +16,21 @@ export default function HomeTab({ onNavigate }: HomeTabProps) {
   // Use Telegram user name if available, otherwise fallback to mock
   const displayName = tgUser?.firstName || MOCK_USER.name.split(' ')[0];
   const points = MOCK_USER.points; // TODO: Fetch from API
+  
+  // Fetch user avatar
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (tgUser) {
+      fetch(`/api/telegram-avatar/${tgUser.id}`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data?.avatarUrl) {
+            setAvatarUrl(data.avatarUrl);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [tgUser]);
   
   const getInitials = (name: string) => {
     return name
@@ -29,9 +45,17 @@ export default function HomeTab({ onNavigate }: HomeTabProps) {
       {/* Greeting Section */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-lg">
-            {getInitials(displayName)}
-          </div>
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={displayName}
+              className="w-16 h-16 rounded-full object-cover shadow-lg border-2 border-white"
+            />
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-lg">
+              {getInitials(displayName)}
+            </div>
+          )}
           <h1 className="text-3xl font-bold">
             {t.home.greeting}, {displayName}! 👋
           </h1>
