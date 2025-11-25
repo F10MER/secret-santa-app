@@ -8,6 +8,8 @@ import { appRouter } from "../routers.js";
 import { createContext } from "./context.js";
 import { serveStatic } from "./static.js";
 import { initBot, getBotWebhookHandler, setupWebhook } from "../bot.js";
+import { validateTelegramWebAppData, generateAuthToken } from "../auth.js";
+import * as db from "../db.js";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -40,6 +42,39 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+  
+  // Telegram auth endpoint
+  app.post("/api/auth/telegram", async (req, res) => {
+    try {
+      const { initData } = req.body;
+      
+      if (!initData) {
+        return res.status(400).json({ error: "initData is required" });
+      }
+
+      const user = validateTelegramWebAppData(initData);
+      
+      if (!user) {
+        return res.status(401).json({ error: "Invalid initData" });
+      }
+
+      // Generate JWT token
+      const token = generateAuthToken(user);
+      
+      // Store or update user in database
+      await db.createOrUpdateUser({
+        telegramId: user.id.toString(),
+        firstName: user.first_name,
+        lastName: user.last_name,
+        username: user.username,
+      });
+
+      res.json({ token, user });
+    } catch (error) {
+      console.error("Auth error:", error);
+      res.status(500).json({ error: "Authentication failed" });
+    }
+  });
   // tRPC API
   app.use(
     "/api/trpc",

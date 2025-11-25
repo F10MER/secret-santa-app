@@ -516,3 +516,42 @@ export async function getEventMessages(eventId: number, limit: number) {
 
   return messages.reverse(); // Return in chronological order
 }
+
+
+// Create or update user from Telegram auth
+export async function createOrUpdateUser(data: {
+  telegramId: string;
+  firstName: string;
+  lastName?: string;
+  username?: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const telegramIdNum = parseInt(data.telegramId);
+  const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ');
+
+  // Check if user exists
+  const existing = await db.select().from(users).where(eq(users.telegramId, telegramIdNum)).limit(1);
+
+  if (existing.length > 0) {
+    // Update existing user
+    await db.update(users)
+      .set({
+        name: fullName,
+        updatedAt: new Date(),
+        lastSignedIn: new Date(),
+      })
+      .where(eq(users.id, existing[0]!.id));
+    return existing[0]!.id;
+  } else {
+    // Create new user
+    const result = await db.insert(users).values({
+      telegramId: telegramIdNum,
+      name: fullName,
+      openId: `telegram:${data.telegramId}`, // For compatibility with existing auth system
+      loginMethod: 'telegram',
+    }).returning({ id: users.id });
+    return result[0]!.id;
+  }
+}

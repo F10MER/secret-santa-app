@@ -237,3 +237,31 @@
 - [ ] Add export all events button (frontend)
 - [ ] Add export single event button (frontend)
 - [ ] Improve ICS file format
+
+
+## API Integration & Final Features (Nov 25, 2024)
+
+### Telegram Authentication
+- [x] Implement Telegram WebApp authentication flow
+- [x] Create auth middleware for protected routes
+- [x] Store user session with JWT
+- [x] Auto-login from Telegram WebApp initData
+
+### API Connections
+- [ ] Connect wishlist form to POST /api/wishlist/create
+- [ ] Connect statistics page to GET /api/features/statistics
+- [ ] Connect achievements to GET /api/features/achievements
+- [ ] Connect invite system to POST /api/features/invite/generate
+
+### Event Chat
+- [ ] Create EventChat component
+- [ ] Integrate with GET /api/features/chat/:eventId
+- [ ] Implement POST /api/features/chat/send
+- [ ] Add real-time updates (polling or WebSocket)
+- [ ] Anonymous messaging toggle
+
+### Notification Integration
+- [ ] Trigger notification on wishlist item reservation
+- [ ] Trigger notification on Secret Santa draw completion
+- [ ] Trigger notification on event invitation
+- [ ] Add notification preferences UI
