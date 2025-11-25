@@ -166,6 +166,26 @@ export async function getUserByTelegramId(telegramId: number) {
   return result.length > 0 ? result[0] : undefined;
 }
 
+export async function createUser(userData: { telegramId: number; name: string; loginMethod: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  try {
+    const result = await db.insert(users).values({
+      openId: `telegram_${userData.telegramId}`,
+      telegramId: userData.telegramId,
+      name: userData.name,
+      loginMethod: userData.loginMethod,
+      lastSignedIn: new Date(),
+    }).returning({ id: users.id });
+    
+    return result[0]?.id;
+  } catch (error) {
+    console.error("[Database] Failed to create user:", error);
+    throw error;
+  }
+}
+
 // Secret Santa Events
 export async function createSantaEvent(event: InsertSantaEvent) {
   const db = await getDb();

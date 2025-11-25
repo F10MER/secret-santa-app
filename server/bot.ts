@@ -56,12 +56,27 @@ export function initBot() {
       const keyboard = new InlineKeyboard()
         .webApp("🎄 Open Secret Santa App", appUrl);
 
-      // Try to check if user exists, but don't fail if DB is unavailable
+      // Try to check if user exists, create if not
       let user = null;
       try {
         user = await db.getUserByTelegramId(telegramId);
+        
+        // Create user if doesn't exist
+        if (!user) {
+          console.log(`[Bot] Creating new user for Telegram ID: ${telegramId}`);
+          const newUserId = await db.createUser({
+            telegramId: telegramId,
+            name: ctx.from?.first_name || ctx.from?.username || `User${telegramId}`,
+            loginMethod: 'telegram',
+          });
+          
+          if (newUserId) {
+            user = await db.getUserByTelegramId(telegramId);
+            console.log(`[Bot] User created successfully with ID: ${newUserId}`);
+          }
+        }
       } catch (dbError) {
-        console.error(`[Bot] Database error when checking user:`, dbError);
+        console.error(`[Bot] Database error when checking/creating user:`, dbError);
         // Continue anyway - user can still open the app
       }
 

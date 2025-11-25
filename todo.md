@@ -385,3 +385,9 @@
 - [ ] Add haptic feedback on button clicks - hook ready, need to add to buttons
 - [ ] Add haptic feedback on successful actions - hook ready
 - [ ] Test on iOS and Android devices
+
+## Authentication Error (Nov 25, 2024)
+- [x] Error "Please login (10001)" when creating events - fixed
+- [x] Bot /start command not creating user in database - now creates user
+- [x] Need to implement user creation on first bot interaction - implemented
+- [x] Ensure Telegram user data is saved to database - user created with telegramId and name
