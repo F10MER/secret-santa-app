@@ -7,6 +7,7 @@ import { GiftIcon, PlusIcon, CheckIcon, ShareIcon } from '../components/Icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { SantaEvent, Participant } from '../types';
 import { MOCK_PARTICIPANT_NAMES } from '../constants';
+import { toast } from 'sonner';
 
 export default function SecretSantaTab() {
   const { t, language } = useLanguage();
@@ -253,7 +254,7 @@ export default function SecretSantaTab() {
                         e.stopPropagation();
                         const inviteLink = `https://t.me/moisanta_bot?start=event_${event.id}`;
                         navigator.clipboard.writeText(inviteLink);
-                        alert(language === 'ru' ? 'Ссылка-приглашение скопирована!' : 'Invite link copied!');
+                        toast.success(language === 'ru' ? 'Ссылка-приглашение скопирована!' : 'Invite link copied!');
                       }}
                       variant="outline"
                       className="w-full"

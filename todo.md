@@ -271,3 +271,11 @@
 - [x] Fix avatar not displaying in home page
 - [x] Fix profile name showing random name instead of Telegram user name
 - [x] Ensure Telegram user data is properly loaded and displayed
+
+
+## Critical Bugs (Nov 25, 2024)
+- [x] Telegram profile data not loading in production - added SDK script to HTML
+- [x] Invite system button exists but doesn't work - improved with toast notifications
+- [x] Default language is English instead of Russian - already set to 'ru' by default
+- [x] No language switcher on home page - added RU/EN switcher
+- [x] Need to debug why Telegram WebApp SDK not initializing properly - SDK script was missing

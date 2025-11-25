@@ -10,7 +10,7 @@ interface HomeTabProps {
 }
 
 export default function HomeTab({ onNavigate }: HomeTabProps) {
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const { user: tgUser } = useTelegram();
   
   // Use Telegram user name if available, otherwise fallback to mock
@@ -42,6 +42,32 @@ export default function HomeTab({ onNavigate }: HomeTabProps) {
 
   return (
     <div className="pb-20 px-4 pt-6 animate-fade-in">
+      {/* Language Switcher */}
+      <div className="flex justify-end mb-4">
+        <div className="flex gap-2 bg-card rounded-full p-1 shadow-sm">
+          <button
+            onClick={() => setLanguage('ru')}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              language === 'ru'
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            🇷🇺 RU
+          </button>
+          <button
+            onClick={() => setLanguage('en')}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              language === 'en'
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            🇬🇧 EN
+          </button>
+        </div>
+      </div>
+      
       {/* Greeting Section */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-4">
