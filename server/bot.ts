@@ -29,18 +29,25 @@ export function initBot() {
 
   // Command: /start
   bot.command("start", async (ctx) => {
-    const telegramId = ctx.from?.id;
-    if (!telegramId) return;
+    try {
+      const telegramId = ctx.from?.id;
+      if (!telegramId) return;
 
-    // Check if user exists in database
-    let user = await db.getUserByTelegramId(telegramId);
+      console.log(`[Bot] /start command from user ${telegramId}`);
+      
+      const keyboard = new InlineKeyboard()
+        .webApp("🎄 Open Secret Santa App", APP_URL);
 
-    console.log(`[Bot] /start command from user ${telegramId}`);
-    
-    const keyboard = new InlineKeyboard()
-      .webApp("🎄 Open Secret Santa App", APP_URL);
+      // Try to check if user exists, but don't fail if DB is unavailable
+      let user = null;
+      try {
+        user = await db.getUserByTelegramId(telegramId);
+      } catch (dbError) {
+        console.error(`[Bot] Database error when checking user:`, dbError);
+        // Continue anyway - user can still open the app
+      }
 
-    if (!user) {
+      if (!user) {
       await ctx.reply(
         `🎅 Welcome to Secret Santa!\n\n` +
         `Organize gift exchanges, create wishlists, and have fun with randomizers!\n\n` +
@@ -54,50 +61,79 @@ export function initBot() {
         `Open the app to continue:`,
         { reply_markup: keyboard }
       );
+      }
+    } catch (error) {
+      console.error(`[Bot] Error in /start command:`, error);
+      // Send a simple error message to user
+      await ctx.reply(
+        `❌ Sorry, something went wrong. Please try again later.`
+      );
     }
   });
 
   // Command: /help
   bot.command("help", async (ctx) => {
-    await ctx.reply(
-      `🎅 *Secret Santa Bot Help*\n\n` +
-      `*Commands:*\n` +
-      `/start - Open the app\n` +
-      `/help - Show this help message\n` +
-      `/stats - View your statistics\n\n` +
-      `*Features:*\n` +
-      `🎁 Create Secret Santa events\n` +
-      `📝 Manage your wishlist\n` +
-      `🎲 Play with randomizers (Dice & Roulette)\n` +
-      `🏆 Compete on the leaderboard\n` +
-      `👥 Invite friends with referral codes`,
-      { parse_mode: "Markdown" }
-    );
+    try {
+      await ctx.reply(
+        `🎅 *Secret Santa Bot Help*\n\n` +
+        `*Commands:*\n` +
+        `/start - Open the app\n` +
+        `/help - Show this help message\n` +
+        `/stats - View your statistics\n\n` +
+        `*Features:*\n` +
+        `🎁 Create Secret Santa events\n` +
+        `📝 Manage your wishlist\n` +
+        `🎲 Play with randomizers (Dice & Roulette)\n` +
+        `🏆 Compete on the leaderboard\n` +
+        `👥 Invite friends with referral codes`,
+        { parse_mode: "Markdown" }
+      );
+    } catch (error) {
+      console.error(`[Bot] Error in /help command:`, error);
+    }
   });
 
   // Command: /stats
   bot.command("stats", async (ctx) => {
-    const telegramId = ctx.from?.id;
-    if (!telegramId) return;
+    try {
+      const telegramId = ctx.from?.id;
+      if (!telegramId) return;
 
-    const user = await db.getUserByTelegramId(telegramId);
-    if (!user) {
-      await ctx.reply("❌ You need to open the app first! Use /start");
-      return;
+      let user = null;
+      try {
+        user = await db.getUserByTelegramId(telegramId);
+      } catch (dbError) {
+        console.error(`[Bot] Database error in /stats:`, dbError);
+        await ctx.reply(`❌ Database temporarily unavailable. Please try again later.`);
+        return;
+      }
+      
+      if (!user) {
+        await ctx.reply("❌ You need to open the app first! Use /start");
+        return;
+      }
+
+      let referralCount = 0;
+      try {
+        referralCount = await db.getReferralCount(user.id);
+      } catch (dbError) {
+        console.error(`[Bot] Error getting referral count:`, dbError);
+      }
+      
+      const level = user.points >= 500 ? "Active 🔥" : "Novice 🌱";
+
+      await ctx.reply(
+        `📊 *Your Statistics*\n\n` +
+        `👤 Name: ${user.name || "Not set"}\n` +
+        `⭐ Points: ${user.points}\n` +
+        `📈 Level: ${level}\n` +
+        `👥 Referrals: ${referralCount}\n` +
+        `🔗 Referral Code: ${user.referralCode || "Not generated"}`,
+        { parse_mode: "Markdown" }
+      );
+    } catch (error) {
+      console.error(`[Bot] Error in /stats command:`, error);
     }
-
-    const referralCount = await db.getReferralCount(user.id);
-    const level = user.points >= 500 ? "Active 🔥" : "Novice 🌱";
-
-    await ctx.reply(
-      `📊 *Your Statistics*\n\n` +
-      `👤 Name: ${user.name || "Not set"}\n` +
-      `⭐ Points: ${user.points}\n` +
-      `📈 Level: ${level}\n` +
-      `👥 Referrals: ${referralCount}\n` +
-      `🔗 Referral Code: ${user.referralCode || "Not generated"}`,
-      { parse_mode: "Markdown" }
-    );
   });
 
   // Handle errors

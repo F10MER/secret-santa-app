@@ -25,11 +25,34 @@ let _pool: Pool | null = null;
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
+      // Parse DATABASE_URL to check if it requires SSL
+      // Only use SSL if explicitly required in the connection string
+      // Internal Easypanel databases (10.0.x.x) don't need SSL
+      const dbUrl = process.env.DATABASE_URL;
+      const isInternalDb = dbUrl.includes('10.0.') || dbUrl.includes('localhost') || dbUrl.includes('127.0.0.1');
+      const requiresSsl = dbUrl.includes('sslmode=require') && !isInternalDb;
+      
       _pool = new Pool({
         connectionString: process.env.DATABASE_URL,
-        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+        ssl: requiresSsl ? { rejectUnauthorized: false } : false,
+        // Connection pool settings
+        max: 10, // maximum number of clients
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 10000,
       });
+      
+      // Test connection
+      try {
+        const client = await _pool.connect();
+        console.log('[Database] Connection test successful');
+        client.release();
+      } catch (testError) {
+        console.error('[Database] Connection test failed:', testError);
+        // Don't throw - allow app to start even if DB is temporarily unavailable
+      }
+      
       _db = drizzle(_pool);
+      console.log('[Database] Connection pool created successfully');
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
