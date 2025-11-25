@@ -5,6 +5,7 @@ import { SectionTitle } from '../components/SectionTitle';
 import { TrophyIcon, GiftIcon } from '../components/Icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTelegram } from '../contexts/TelegramContext';
+import { trpc } from '@/lib/trpc';
 
 interface UserStats {
   eventsParticipated: number;
@@ -78,35 +79,38 @@ export default function StatisticsPage({ onBack }: StatisticsPageProps) {
     },
   }[language];
 
-  useEffect(() => {
-    // TODO: Fetch real stats from API
-    // For now, using mock data
-    setStats({
-      eventsParticipated: 3,
-      giftsGiven: 5,
-      giftsReceived: 4,
-      wishlistItemsReserved: 7,
-    });
+  // Fetch statistics from API
+  const { data: statsData } = trpc.features.statistics.getMyStats.useQuery(
+    undefined,
+    { enabled: !!telegramUser }
+  );
+  
+  const { data: achievementsData = [] } = trpc.features.achievements.getMyAchievements.useQuery(
+    undefined,
+    { enabled: !!telegramUser }
+  );
 
-    setAchievements([
-      {
-        id: '1',
-        type: 'first_event',
-        title: t.achievementTypes.first_event,
-        description: language === 'ru' ? 'Участвовал в первом событии' : 'Participated in first event',
-        icon: '🎉',
-        unlockedAt: new Date().toISOString(),
-      },
-      {
-        id: '2',
-        type: 'first_gift',
-        title: t.achievementTypes.first_gift,
-        description: language === 'ru' ? 'Подарил первый подарок' : 'Gave first gift',
-        icon: '🎁',
-        unlockedAt: new Date().toISOString(),
-      },
-    ]);
-  }, [language]);
+  useEffect(() => {
+    if (statsData) {
+      setStats({
+        eventsParticipated: statsData.eventsParticipated || 0,
+        giftsGiven: statsData.giftsGiven || 0,
+        giftsReceived: statsData.giftsReceived || 0,
+        wishlistItemsReserved: 0, // TODO: Add this field to schema
+      });
+    }
+
+    if (achievementsData.length > 0) {
+      setAchievements(achievementsData.map((a: any) => ({
+        id: a.id.toString(),
+        type: a.achievementType,
+        title: t.achievementTypes[a.achievementType as keyof typeof t.achievementTypes] || a.achievementType,
+        description: language === 'ru' ? 'Достижение разблокировано' : 'Achievement unlocked',
+        icon: getAchievementIcon(a.achievementType),
+        unlockedAt: a.unlockedAt.toISOString(),
+      })));
+    }
+  }, [statsData, achievementsData, language]);
 
   const getAchievementIcon = (type: string) => {
     const icons: Record<string, string> = {

@@ -248,9 +248,9 @@
 - [x] Auto-login from Telegram WebApp initData
 
 ### API Connections
-- [ ] Connect wishlist form to POST /api/wishlist/create
-- [ ] Connect statistics page to GET /api/features/statistics
-- [ ] Connect achievements to GET /api/features/achievements
+- [x] Connect wishlist form to POST /api/wishlist/create
+- [x] Connect statistics page to GET /api/features/statistics
+- [x] Connect achievements to GET /api/features/achievements
 - [ ] Connect invite system to POST /api/features/invite/generate
 
 ### Event Chat

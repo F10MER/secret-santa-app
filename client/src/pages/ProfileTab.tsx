@@ -20,6 +20,7 @@ import { toast } from 'sonner';
 import MyReservations from './MyReservations';
 import StatisticsPage from './StatisticsPage';
 import { AddWishlistItemDialog } from '../components/AddWishlistItemDialog';
+import { trpc } from '@/lib/trpc';
 
 export default function ProfileTab() {
   const { t, language, setLanguage } = useLanguage();
@@ -40,26 +41,32 @@ export default function ProfileTab() {
   const [showMyReservations, setShowMyReservations] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
   const [wishlistPrivacy, setWishlistPrivacy] = useState<'all' | 'friends'>('all');
-  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
 
-  const handleAddWishlistItem = (item: {
+  // Fetch wishlist from API
+  const { data: wishlistItems = [], refetch: refetchWishlist } = trpc.wishlist.getMy.useQuery();
+  const createWishlistItem = trpc.wishlist.create.useMutation({
+    onSuccess: () => {
+      refetchWishlist();
+      toast.success(language === 'ru' ? 'Желание добавлено!' : 'Item added!');
+    },
+    onError: (error) => {
+      toast.error(error.message || (language === 'ru' ? 'Ошибка при добавлении' : 'Failed to add item'));
+    },
+  });
+
+  const handleAddWishlistItem = async (item: {
     title: string;
     description: string;
     productLink?: string;
     imageUrl?: string;
   }) => {
-    // TODO: Call API to create wishlist item
-    // For now, just add to local state
-    const newItem: WishlistItem = {
-      id: `wish-${Date.now()}`,
-      image: item.imageUrl || '',
+    createWishlistItem.mutate({
+      title: item.title,
       description: item.description,
-      createdAt: new Date().toISOString(),
-    };
-
-    setWishlistItems([...wishlistItems, newItem]);
-    toast.success('Item added!');
+      imageUrl: item.imageUrl,
+      privacy: wishlistPrivacy,
+    });
   };
 
   const handleShareReferral = () => {
@@ -262,12 +269,12 @@ export default function ProfileTab() {
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <img
-                src={item.image}
-                alt={item.description}
+                src={item.imageUrl || '/placeholder.png'}
+                alt={item.description || item.title}
                 className="w-full h-32 object-cover"
               />
               <div className="p-2">
-                <p className="text-sm font-medium line-clamp-2">{item.description}</p>
+                <p className="text-sm font-medium line-clamp-2">{item.description || item.title}</p>
               </div>
             </Card>
           ))}
