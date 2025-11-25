@@ -362,3 +362,157 @@ export async function updateReservationDeadline(wishlistItemId: number, userId: 
       )
     );
 }
+
+// Event Invite Codes
+export async function updateEventInviteCode(eventId: number, inviteCode: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(santaEvents).set({ inviteCode }).where(eq(santaEvents.id, eventId));
+}
+
+export async function getEventByInviteCode(inviteCode: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.select().from(santaEvents).where(eq(santaEvents.inviteCode, inviteCode)).limit(1);
+  return result[0] || null;
+}
+
+// User Statistics
+export async function getUserStatistics(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const { userStatistics } = await import("../drizzle/schema");
+  const result = await db.select().from(userStatistics).where(eq(userStatistics.userId, userId)).limit(1);
+  
+  if (result[0]) return result[0];
+
+  // Create if doesn't exist
+  const newStats = { userId };
+  const created = await db.insert(userStatistics).values(newStats).returning();
+  return created[0] || null;
+}
+
+export async function updateUserStatistics(userId: number, updates: {
+  eventsParticipated?: number;
+  giftsGiven?: number;
+  giftsReceived?: number;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { userStatistics } = await import("../drizzle/schema");
+  await db.update(userStatistics).set({ ...updates, updatedAt: new Date() }).where(eq(userStatistics.userId, userId));
+}
+
+export async function incrementUserStats(userId: number, field: 'eventsParticipated' | 'giftsGiven' | 'giftsReceived') {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { userStatistics } = await import("../drizzle/schema");
+  const stats = await getUserStatistics(userId);
+  if (!stats) return;
+
+  const newValue = (stats[field] || 0) + 1;
+  await updateUserStatistics(userId, { [field]: newValue });
+}
+
+export async function getStatisticsLeaderboard(limit: number, sortBy: 'events' | 'gifts_given' | 'gifts_received') {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { userStatistics } = await import("../drizzle/schema");
+  const fieldMap = {
+    events: userStatistics.eventsParticipated,
+    gifts_given: userStatistics.giftsGiven,
+    gifts_received: userStatistics.giftsReceived,
+  };
+
+  const result = await db
+    .select({
+      userId: userStatistics.userId,
+      userName: users.name,
+      eventsParticipated: userStatistics.eventsParticipated,
+      giftsGiven: userStatistics.giftsGiven,
+      giftsReceived: userStatistics.giftsReceived,
+    })
+    .from(userStatistics)
+    .leftJoin(users, eq(userStatistics.userId, users.id))
+    .orderBy(sql`${fieldMap[sortBy]} DESC`)
+    .limit(limit);
+
+  return result;
+}
+
+// User Achievements
+export async function getUserAchievements(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { userAchievements } = await import("../drizzle/schema");
+  return await db.select().from(userAchievements).where(eq(userAchievements.userId, userId));
+}
+
+export async function getUserAchievementByType(userId: number, achievementType: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const { userAchievements } = await import("../drizzle/schema");
+  const result = await db
+    .select()
+    .from(userAchievements)
+    .where(and(eq(userAchievements.userId, userId), eq(userAchievements.achievementType, achievementType as any)))
+    .limit(1);
+
+  return result[0] || null;
+}
+
+export async function createUserAchievement(data: { userId: number; achievementType: any }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { userAchievements } = await import("../drizzle/schema");
+  const result = await db.insert(userAchievements).values(data).returning({ id: userAchievements.id });
+  return result[0]?.id;
+}
+
+// Event Messages (Chat)
+export async function createEventMessage(data: {
+  eventId: number;
+  userId: number;
+  message: string;
+  isAnonymous: boolean;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { eventMessages } = await import("../drizzle/schema");
+  const result = await db.insert(eventMessages).values(data).returning({ id: eventMessages.id });
+  return result[0]?.id;
+}
+
+export async function getEventMessages(eventId: number, limit: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { eventMessages } = await import("../drizzle/schema");
+  const messages = await db
+    .select({
+      id: eventMessages.id,
+      eventId: eventMessages.eventId,
+      userId: eventMessages.userId,
+      userName: users.name,
+      message: eventMessages.message,
+      isAnonymous: eventMessages.isAnonymous,
+      createdAt: eventMessages.createdAt,
+    })
+    .from(eventMessages)
+    .leftJoin(users, eq(eventMessages.userId, users.id))
+    .where(eq(eventMessages.eventId, eventId))
+    .orderBy(sql`${eventMessages.createdAt} DESC`)
+    .limit(limit);
+
+  return messages.reverse(); // Return in chronological order
+}

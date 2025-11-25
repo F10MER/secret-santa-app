@@ -6,6 +6,8 @@ export const roleEnum = pgEnum("role", ["user", "admin"]);
 export const statusEnum = pgEnum("status", ["created", "assigned"]);
 export const privacyEnum = pgEnum("privacy", ["all", "friends"]);
 export const randomizerTypeEnum = pgEnum("randomizer_type", ["dice", "roulette"]);
+export const categoryEnum = pgEnum("category", ["electronics", "books", "clothing", "toys", "food", "sports", "beauty", "home", "other"]);
+export const achievementTypeEnum = pgEnum("achievement_type", ["first_event", "five_events", "ten_events", "first_gift", "five_gifts", "ten_gifts", "active_user", "social_butterfly"]);
 
 /**
  * Core user table backing auth flow.
@@ -40,6 +42,7 @@ export const santaEvents = pgTable("santa_events", {
   maxBudget: integer("maxBudget"),
   eventDate: timestamp("eventDate"),
   status: statusEnum("status").default("created").notNull(),
+  inviteCode: varchar("inviteCode", { length: 32 }).unique(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
@@ -85,6 +88,9 @@ export const wishlistItems = pgTable("wishlist_items", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   imageUrl: text("imageUrl"),
+  productLink: text("productLink"),
+  price: integer("price"),
+  category: categoryEnum("category").default("other"),
   privacy: privacyEnum("privacy").default("all").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
@@ -120,6 +126,49 @@ export const wishlistReservations = pgTable("wishlist_reservations", {
 
 export type WishlistReservation = typeof wishlistReservations.$inferSelect;
 export type InsertWishlistReservation = typeof wishlistReservations.$inferInsert;
+
+/**
+ * User Statistics
+ */
+export const userStatistics = pgTable("user_statistics", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer("userId").notNull().unique(),
+  eventsParticipated: integer("eventsParticipated").default(0).notNull(),
+  giftsGiven: integer("giftsGiven").default(0).notNull(),
+  giftsReceived: integer("giftsReceived").default(0).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
+export type UserStatistics = typeof userStatistics.$inferSelect;
+export type InsertUserStatistics = typeof userStatistics.$inferInsert;
+
+/**
+ * User Achievements
+ */
+export const userAchievements = pgTable("user_achievements", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer("userId").notNull(),
+  achievementType: achievementTypeEnum("achievementType").notNull(),
+  unlockedAt: timestamp("unlockedAt").defaultNow().notNull(),
+});
+
+export type UserAchievement = typeof userAchievements.$inferSelect;
+export type InsertUserAchievement = typeof userAchievements.$inferInsert;
+
+/**
+ * Event Chat Messages
+ */
+export const eventMessages = pgTable("event_messages", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  eventId: integer("eventId").notNull(),
+  userId: integer("userId").notNull(),
+  message: text("message").notNull(),
+  isAnonymous: boolean("isAnonymous").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EventMessage = typeof eventMessages.$inferSelect;
+export type InsertEventMessage = typeof eventMessages.$inferInsert;
 
 // Relations
 export const usersRelations = relations(users, ({ many, one }) => ({
@@ -191,6 +240,31 @@ export const wishlistReservationsRelations = relations(wishlistReservations, ({ 
 export const randomizerHistoryRelations = relations(randomizerHistory, ({ one }) => ({
   user: one(users, {
     fields: [randomizerHistory.userId],
+    references: [users.id],
+  }),
+}));
+
+export const userStatisticsRelations = relations(userStatistics, ({ one }) => ({
+  user: one(users, {
+    fields: [userStatistics.userId],
+    references: [users.id],
+  }),
+}));
+
+export const userAchievementsRelations = relations(userAchievements, ({ one }) => ({
+  user: one(users, {
+    fields: [userAchievements.userId],
+    references: [users.id],
+  }),
+}));
+
+export const eventMessagesRelations = relations(eventMessages, ({ one }) => ({
+  event: one(santaEvents, {
+    fields: [eventMessages.eventId],
+    references: [santaEvents.id],
+  }),
+  user: one(users, {
+    fields: [eventMessages.userId],
     references: [users.id],
   }),
 }));

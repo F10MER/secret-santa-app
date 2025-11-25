@@ -8,6 +8,7 @@ import { storagePut } from "./storage";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { users } from "../drizzle/schema";
+import { featuresRouter } from "./features-router";
 
 // Helper function to shuffle array (Fisher-Yates algorithm)
 function shuffleArray<T>(array: T[]): T[] {
@@ -21,6 +22,7 @@ function shuffleArray<T>(array: T[]): T[] {
 
 export const appRouter = router({
   system: systemRouter,
+  features: featuresRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

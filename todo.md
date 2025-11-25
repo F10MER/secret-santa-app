@@ -188,3 +188,52 @@
 - [x] Set Russian as default language
 - [x] Add theme switcher button (light/dark mode)
 - [x] Add user avatar on home page greeting
+
+## Comprehensive Feature Improvements (Nov 25, 2024)
+
+### Secret Santa Invite System
+- [x] Generate unique invite link for each event
+- [x] Add invite code to event schema
+- [x] Create invite link sharing functionality
+- [x] Implement join-by-invite-only restriction
+- [ ] Show participant list to organizer (frontend)
+- [ ] Add invite link to event details page (frontend)
+
+### Telegram Notifications
+- [x] Notification when gift is reserved from wishlist (backend)
+- [x] Reminder for approaching reservation deadline (backend)
+- [x] Notification when Secret Santa draw is completed (backend)
+- [x] Notification when invited to Secret Santa event (backend)
+- [ ] Add notification preferences in settings (frontend)
+
+### Enhanced Wishlist
+- [x] Add product link field to wishlist items (schema)
+- [x] Add price field to wishlist items (schema)
+- [x] Add category field (electronics, books, clothing, etc.) (schema)
+- [ ] Filter wishlist by category (frontend)
+- [ ] Sort wishlist by price (frontend)
+- [ ] Show price range in wishlist (frontend)
+- [ ] Update wishlist form to include new fields (frontend)
+
+### Statistics and Achievements
+- [x] Track Secret Santa participation count (schema + API)
+- [x] Track gifts given/received count (schema + API)
+- [x] Create achievement badges system (schema + API)
+- [ ] Display achievements in profile (frontend)
+- [ ] Add statistics page (frontend)
+- [ ] Award points for achievements (integration)
+
+### Event Chat
+- [x] Create chat schema for events
+- [x] Chat API endpoints
+- [ ] Add chat UI to event details (frontend)
+- [ ] Real-time message updates (frontend)
+- [ ] Anonymous messaging option for Secret Santa (frontend)
+- [ ] Message notifications (integration)
+
+### Calendar Export Improvements
+- [ ] Test export with Google Calendar
+- [ ] Test export with Apple Calendar
+- [ ] Add export all events button (frontend)
+- [ ] Add export single event button (frontend)
+- [ ] Improve ICS file format
