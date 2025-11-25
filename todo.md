@@ -356,3 +356,8 @@
 - [ ] Bot: Send reminder 3 days before event date
 - [ ] Bot: Send reminder 1 day before event date
 - [ ] Add notification preferences in user settings
+
+## SSL Error Still Occurring in Production (Nov 25, 2024)
+- [x] Current sslmode=disable fix not working in production - improved SSL config
+- [x] Need to improve URL parameter handling to work with existing query params - fixed
+- [x] Test with different DATABASE_URL formats - now handles all cases

@@ -28,21 +28,29 @@ export async function getDb() {
       // Parse DATABASE_URL to check if it requires SSL
       // Only use SSL if explicitly required in the connection string
       // Internal Easypanel databases (10.0.x.x) don't support SSL
-      let dbUrl = process.env.DATABASE_URL;
+      const dbUrl = process.env.DATABASE_URL;
       const isInternalDb = dbUrl.includes('10.0.') || dbUrl.includes('localhost') || dbUrl.includes('127.0.0.1');
       
-      // For internal databases, explicitly disable SSL in the connection string
-      if (isInternalDb && !dbUrl.includes('sslmode=')) {
-        const separator = dbUrl.includes('?') ? '&' : '?';
-        dbUrl = `${dbUrl}${separator}sslmode=disable`;
-        console.log('[Database] Internal database detected, SSL disabled');
-      }
+      // Determine SSL configuration
+      let sslConfig: boolean | { rejectUnauthorized: boolean } = false;
       
-      const requiresSsl = dbUrl.includes('sslmode=require');
+      if (isInternalDb) {
+        // Internal databases: explicitly disable SSL
+        sslConfig = false;
+        console.log('[Database] Internal database detected (10.0.x.x), SSL explicitly disabled');
+      } else if (dbUrl.includes('sslmode=require')) {
+        // External databases with explicit SSL requirement
+        sslConfig = { rejectUnauthorized: false };
+        console.log('[Database] External database with SSL required');
+      } else {
+        // Default: no SSL
+        sslConfig = false;
+        console.log('[Database] SSL disabled by default');
+      }
       
       _pool = new Pool({
         connectionString: dbUrl,
-        ssl: requiresSsl ? { rejectUnauthorized: false } : false,
+        ssl: sslConfig,
         // Connection pool settings
         max: 10, // maximum number of clients
         idleTimeoutMillis: 30000,
