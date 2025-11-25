@@ -391,3 +391,10 @@
 - [x] Bot /start command not creating user in database - now creates user
 - [x] Need to implement user creation on first bot interaction - implemented
 - [x] Ensure Telegram user data is saved to database - user created with telegramId and name
+
+## Frontend Authentication Error (Nov 25, 2024)
+- [x] Error 10001 still occurs when creating events - fixed
+- [x] Bot creates user successfully but frontend can't authenticate - fixed
+- [x] Need to check Telegram WebApp initData integration - added to tRPC headers
+- [x] Verify tRPC authentication middleware - added Telegram auth to context.ts
+- [ ] Fix hardcoded points (450) in UI - should show real points from DB

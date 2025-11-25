@@ -42,6 +42,16 @@ const trpcClient = trpc.createClient({
     httpBatchLink({
       url: "/api/trpc",
       transformer: superjson,
+      headers() {
+        // Send Telegram WebApp initData for authentication
+        const initData = (window as any).Telegram?.WebApp?.initData;
+        if (initData) {
+          return {
+            'x-telegram-init-data': initData,
+          };
+        }
+        return {};
+      },
       fetch(input, init) {
         return globalThis.fetch(input, {
           ...(init ?? {}),
