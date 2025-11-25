@@ -33,10 +33,28 @@ export function initBot() {
       const telegramId = ctx.from?.id;
       if (!telegramId) return;
 
-      console.log(`[Bot] /start command from user ${telegramId}`);
+      // Extract deep link parameter (e.g., /start event_ABC123)
+      const startPayload = ctx.match;
+      console.log(`[Bot] /start command from user ${telegramId}, payload: ${startPayload}`);
+      
+      // Check if this is an event invite link
+      let inviteCode: string | null = null;
+      if (startPayload && typeof startPayload === 'string') {
+        const match = startPayload.match(/^event_(.+)$/);
+        if (match) {
+          inviteCode = match[1];
+          console.log(`[Bot] Event invite detected: ${inviteCode}`);
+        }
+      }
+
+      // Build app URL with invite code if present
+      let appUrl = APP_URL;
+      if (inviteCode) {
+        appUrl = `${APP_URL}?inviteCode=${inviteCode}`;
+      }
       
       const keyboard = new InlineKeyboard()
-        .webApp("🎄 Open Secret Santa App", APP_URL);
+        .webApp("🎄 Open Secret Santa App", appUrl);
 
       // Try to check if user exists, but don't fail if DB is unavailable
       let user = null;
@@ -48,12 +66,15 @@ export function initBot() {
       }
 
       if (!user) {
-      await ctx.reply(
-        `🎅 Welcome to Secret Santa!\n\n` +
-        `Organize gift exchanges, create wishlists, and have fun with randomizers!\n\n` +
-        `Click the button below to start:`,
-        { reply_markup: keyboard }
-      );
+        const welcomeMessage = inviteCode 
+          ? `🎅 Welcome to Secret Santa!\n\n` +
+            `You've been invited to join an event!\n\n` +
+            `Click the button below to accept the invitation:`
+          : `🎅 Welcome to Secret Santa!\n\n` +
+            `Organize gift exchanges, create wishlists, and have fun with randomizers!\n\n` +
+            `Click the button below to start:`;
+        
+        await ctx.reply(welcomeMessage, { reply_markup: keyboard });
     } else {
       await ctx.reply(
         `🎄 Welcome back, ${user.name || "friend"}!\n\n` +

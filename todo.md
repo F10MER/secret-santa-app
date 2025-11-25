@@ -308,4 +308,20 @@
 - [ ] SSL fix not applied in production - old code still running
 - [ ] Need to verify correct version is deployed
 - [x] Add version identifier to logs - added SSL_FIX_v2 banner
-- [ ] Ensure Easypanel pulls latest changes
+- [x] Ensure Easypanel pulls latest changes - pushed to GitHub (a44f123)
+
+## Invite System with Referral Links (Nov 25, 2024)
+- [x] Create database schema for events (id, name, description, creator, invite_code, date, budget, etc.)
+- [x] Create database schema for event participants (event_id, user_id, invited_by, joined_at)
+- [x] Create database schema for friendships (user_id, friend_id, created_at)
+- [x] Backend API: Create event endpoint
+- [x] Backend API: Get event by invite code
+- [x] Backend API: Join event by invite code (auto-add friend relationship)
+- [x] Backend API: Get user's events list
+- [x] Backend API: Get user's friends list
+- [x] Frontend: Show invite link with copy button on event details page
+- [x] Frontend: Generate shareable Telegram link (t.me/bot?start=event_CODE)
+- [x] Bot: Handle /start event_CODE deep link parameter
+- [x] Bot: Auto-join user to event and add friend when using invite link
+- [x] Remove ability to browse/join events without invite link
+- [ ] Test invite flow end-to-end

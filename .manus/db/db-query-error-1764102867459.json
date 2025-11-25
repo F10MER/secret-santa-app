@@ -1,0 +1,13 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS \"friendships\" (\n\t\"id\" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name \"friendships_id_seq\" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),\n\t\"userId\" integer NOT NULL,\n\t\"friendId\" integer NOT NULL,\n\t\"createdAt\" timestamp DEFAULT now() NOT NULL\n);\n\nALTER TABLE \"event_participants\" ADD COLUMN IF NOT EXISTS \"invitedBy\" integer;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4MLmj7VnsLHs6bq.32afa1fdb4e4 --database JwRcUjv5PSirsVZ9cATS34 --execute CREATE TABLE IF NOT EXISTS \"friendships\" (\n\t\"id\" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name \"friendships_id_seq\" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),\n\t\"userId\" integer NOT NULL,\n\t\"friendId\" integer NOT NULL,\n\t\"createdAt\" timestamp DEFAULT now() NOT NULL\n);\n\nALTER TABLE \"event_participants\" ADD COLUMN IF NOT EXISTS \"invitedBy\" integer;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1064 (42000) at line 1: You have an error in your SQL syntax; check the manual that corresponds to your TiDB version for the right syntax to use line 1 column 40 near \"\"friendships\" (",
+    "\t\"id\" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name \"friendships_id_seq\" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),",
+    "\t\"userId\" integer NOT NULL,",
+    "\t\"friendId\" integer NOT NULL,",
+    "\t\"createdAt\" timestamp DEFAULT now() NOT NULL",
+    ")\""
+  ]
+}

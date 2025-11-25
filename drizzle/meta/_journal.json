@@ -15,6 +15,13 @@
       "when": 1764042247807,
       "tag": "0001_sparkling_scarlet_spider",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1764102821104,
+      "tag": "0002_wide_carlie_cooper",
+      "breakpoints": true
     }
   ]
 }

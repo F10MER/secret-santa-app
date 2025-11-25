@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Route, Switch, useLocation } from 'wouter';
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,13 +16,26 @@ import PublicWishlist from "./pages/PublicWishlist";
 
 function MainApp() {
   const [activeTab, setActiveTab] = useState('home');
+  const [inviteCode, setInviteCode] = useState<string | null>(null);
+
+  // Check for invite code in URL on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('inviteCode');
+    if (code) {
+      setInviteCode(code);
+      setActiveTab('santa'); // Auto-switch to Santa tab
+      // Clear URL parameter
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
   const renderActiveTab = () => {
     switch (activeTab) {
       case 'home':
         return <HomeTab onNavigate={setActiveTab} />;
       case 'santa':
-        return <SecretSantaTab />;
+        return <SecretSantaTab inviteCode={inviteCode} onInviteHandled={() => setInviteCode(null)} />;
       case 'randomizers':
         return <RandomizersTab />;
       case 'calendar':

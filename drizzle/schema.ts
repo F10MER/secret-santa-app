@@ -59,11 +59,25 @@ export const eventParticipants = pgTable("event_participants", {
   userId: integer("userId"),
   name: varchar("name", { length: 255 }).notNull(),
   isMockUser: boolean("isMockUser").default(false).notNull(),
+  invitedBy: integer("invitedBy"), // User ID who invited this participant
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 export type EventParticipant = typeof eventParticipants.$inferSelect;
 export type InsertEventParticipant = typeof eventParticipants.$inferInsert;
+
+/**
+ * Friendships - tracks friend relationships between users
+ */
+export const friendships = pgTable("friendships", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer("userId").notNull(),
+  friendId: integer("friendId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Friendship = typeof friendships.$inferSelect;
+export type InsertFriendship = typeof friendships.$inferInsert;
 
 /**
  * Secret Santa Assignments
