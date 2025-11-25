@@ -3,13 +3,13 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SectionTitle } from '../components/SectionTitle';
-import { GiftIcon, PlusIcon, CheckIcon } from '../components/Icons';
+import { GiftIcon, PlusIcon, CheckIcon, ShareIcon } from '../components/Icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { SantaEvent, Participant } from '../types';
 import { MOCK_PARTICIPANT_NAMES } from '../constants';
 
 export default function SecretSantaTab() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [events, setEvents] = useState<SantaEvent[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
@@ -248,6 +248,20 @@ export default function SecretSantaTab() {
               <div className="space-y-2 animate-slide-up">
                 {event.status === 'Created' && (
                   <>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const inviteLink = `https://t.me/moisanta_bot?start=event_${event.id}`;
+                        navigator.clipboard.writeText(inviteLink);
+                        alert(language === 'ru' ? 'Ссылка-приглашение скопирована!' : 'Invite link copied!');
+                      }}
+                      variant="outline"
+                      className="w-full"
+                      size="sm"
+                    >
+                      <ShareIcon size={16} className="mr-2" />
+                      {language === 'ru' ? 'Пригласить участников' : 'Invite Participants'}
+                    </Button>
                     <Button
                       onClick={(e) => {
                         e.stopPropagation();

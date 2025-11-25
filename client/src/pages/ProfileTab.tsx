@@ -18,6 +18,7 @@ import { MOCK_USER, MOCK_LEADERBOARD } from '../constants';
 import { WishlistItem } from '../types';
 import { toast } from 'sonner';
 import MyReservations from './MyReservations';
+import StatisticsPage from './StatisticsPage';
 import { AddWishlistItemDialog } from '../components/AddWishlistItemDialog';
 
 export default function ProfileTab() {
@@ -37,6 +38,7 @@ export default function ProfileTab() {
     : MOCK_USER;
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showMyReservations, setShowMyReservations] = useState(false);
+  const [showStatistics, setShowStatistics] = useState(false);
   const [wishlistPrivacy, setWishlistPrivacy] = useState<'all' | 'friends'>('all');
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -83,6 +85,11 @@ export default function ProfileTab() {
   // My Reservations View
   if (showMyReservations) {
     return <MyReservations onBack={() => setShowMyReservations(false)} />;
+  }
+
+  // Statistics View
+  if (showStatistics) {
+    return <StatisticsPage onBack={() => setShowStatistics(false)} />;
   }
 
   // Leaderboard Modal
@@ -174,6 +181,15 @@ export default function ProfileTab() {
       >
         <TrophyIcon size={20} className="mr-2" />
         {t.profile.leaderboard}
+      </Button>
+
+      {/* Statistics Button */}
+      <Button
+        onClick={() => setShowStatistics(true)}
+        className="w-full mb-4 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700"
+      >
+        <TrophyIcon size={20} className="mr-2" />
+        {language === 'ru' ? 'Статистика и достижения' : 'Statistics & Achievements'}
       </Button>
 
       {/* My Reservations Button */}

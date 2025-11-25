@@ -196,8 +196,8 @@
 - [x] Add invite code to event schema
 - [x] Create invite link sharing functionality
 - [x] Implement join-by-invite-only restriction
-- [ ] Show participant list to organizer (frontend)
-- [ ] Add invite link to event details page (frontend)
+- [x] Show participant list to organizer (frontend)
+- [x] Add invite link to event details page (frontend)
 
 ### Telegram Notifications
 - [x] Notification when gift is reserved from wishlist (backend)
@@ -219,8 +219,8 @@
 - [x] Track Secret Santa participation count (schema + API)
 - [x] Track gifts given/received count (schema + API)
 - [x] Create achievement badges system (schema + API)
-- [ ] Display achievements in profile (frontend)
-- [ ] Add statistics page (frontend)
+- [x] Display achievements in profile (frontend)
+- [x] Add statistics page (frontend)
 - [ ] Award points for achievements (integration)
 
 ### Event Chat
