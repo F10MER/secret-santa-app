@@ -279,3 +279,10 @@
 - [x] Default language is English instead of Russian - already set to 'ru' by default
 - [x] No language switcher on home page - added RU/EN switcher
 - [x] Need to debug why Telegram WebApp SDK not initializing properly - SDK script was missing
+
+
+## Bot Command Issues (Nov 25, 2024)
+- [x] Bot not responding to /start command - fixed env variable
+- [x] Webhook not receiving updates from Telegram - added logging
+- [x] Need to add logging to webhook handler - added middleware
+- [x] Verify webhook URL is correctly registered with Telegram - using WEBHOOK_URL

@@ -4,6 +4,7 @@ import * as db from "./db";
 // Bot token will be provided via environment variable
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
 const WEBHOOK_URL = process.env.WEBHOOK_URL || "";
+const APP_URL = process.env.WEBHOOK_URL || "https://moisanta.airatai.com";
 const NODE_ENV = process.env.NODE_ENV || "development";
 
 if (!BOT_TOKEN) {
@@ -20,6 +21,12 @@ export function initBot() {
 
   bot = new Bot(BOT_TOKEN);
 
+  // Log all incoming updates for debugging
+  bot.use(async (ctx, next) => {
+    console.log(`[Bot] Received update:`, JSON.stringify(ctx.update, null, 2));
+    await next();
+  });
+
   // Command: /start
   bot.command("start", async (ctx) => {
     const telegramId = ctx.from?.id;
@@ -28,8 +35,10 @@ export function initBot() {
     // Check if user exists in database
     let user = await db.getUserByTelegramId(telegramId);
 
+    console.log(`[Bot] /start command from user ${telegramId}`);
+    
     const keyboard = new InlineKeyboard()
-      .webApp("🎄 Open Secret Santa App", process.env.VITE_APP_URL || "https://your-app-url.com");
+      .webApp("🎄 Open Secret Santa App", APP_URL);
 
     if (!user) {
       await ctx.reply(
