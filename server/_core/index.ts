@@ -32,6 +32,10 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 async function startServer() {
+  console.log('='.repeat(60));
+  console.log('🎄 Secret Santa App - Version: SSL_FIX_v2 (2024-11-25)');
+  console.log('='.repeat(60));
+  
   const app = express();
   const server = createServer(app);
   

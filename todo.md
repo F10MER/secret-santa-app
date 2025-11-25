@@ -303,3 +303,9 @@
 - [x] ssl: false setting not being applied in production - added sslmode=disable to URL
 - [x] Need to check if DATABASE_URL has sslmode parameter - auto-added if missing
 - [x] May need to explicitly add ?sslmode=disable to connection string - implemented
+
+## Deployment Verification (Nov 25, 2024)
+- [ ] SSL fix not applied in production - old code still running
+- [ ] Need to verify correct version is deployed
+- [x] Add version identifier to logs - added SSL_FIX_v2 banner
+- [ ] Ensure Easypanel pulls latest changes
