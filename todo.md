@@ -213,7 +213,7 @@
 - [ ] Filter wishlist by category (frontend)
 - [ ] Sort wishlist by price (frontend)
 - [ ] Show price range in wishlist (frontend)
-- [ ] Update wishlist form to include new fields (frontend)
+- [x] Update wishlist form to include new fields (frontend)
 
 ### Statistics and Achievements
 - [x] Track Secret Santa participation count (schema + API)

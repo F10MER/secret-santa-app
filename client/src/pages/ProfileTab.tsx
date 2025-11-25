@@ -18,6 +18,7 @@ import { MOCK_USER, MOCK_LEADERBOARD } from '../constants';
 import { WishlistItem } from '../types';
 import { toast } from 'sonner';
 import MyReservations from './MyReservations';
+import { AddWishlistItemDialog } from '../components/AddWishlistItemDialog';
 
 export default function ProfileTab() {
   const { t, language, setLanguage } = useLanguage();
@@ -38,33 +39,25 @@ export default function ProfileTab() {
   const [showMyReservations, setShowMyReservations] = useState(false);
   const [wishlistPrivacy, setWishlistPrivacy] = useState<'all' | 'friends'>('all');
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showAddDialog, setShowAddDialog] = useState(false);
 
-  const handleAddWishlistItem = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const description = prompt(t.profile.addItem + ' - Enter description:');
-      if (!description) return;
-
-      const newItem: WishlistItem = {
-        id: `wish-${Date.now()}`,
-        image: event.target?.result as string,
-        description,
-        createdAt: new Date().toISOString(),
-      };
-
-      setWishlistItems([...wishlistItems, newItem]);
+  const handleAddWishlistItem = (item: {
+    title: string;
+    description: string;
+    productLink?: string;
+    imageUrl?: string;
+  }) => {
+    // TODO: Call API to create wishlist item
+    // For now, just add to local state
+    const newItem: WishlistItem = {
+      id: `wish-${Date.now()}`,
+      image: item.imageUrl || '',
+      description: item.description,
+      createdAt: new Date().toISOString(),
     };
-    reader.readAsDataURL(file);
+
+    setWishlistItems([...wishlistItems, newItem]);
+    toast.success('Item added!');
   };
 
   const handleShareReferral = () => {
@@ -225,20 +218,18 @@ export default function ProfileTab() {
       </div>
 
       <Button
-        onClick={handleAddWishlistItem}
+        onClick={() => setShowAddDialog(true)}
         variant="outline"
         className="w-full mb-4"
       >
-        <PlusIcon size={20} className="mr-2" />
+        <PlusIcon className="mr-2" />
         {t.profile.addItem}
       </Button>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-        className="hidden"
+      <AddWishlistItemDialog
+        open={showAddDialog}
+        onOpenChange={setShowAddDialog}
+        onAdd={handleAddWishlistItem}
       />
 
       {wishlistItems.length === 0 ? (
