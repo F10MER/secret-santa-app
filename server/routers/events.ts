@@ -226,6 +226,86 @@ export const eventsRouter = router({
     }),
 
   /**
+   * Update event (only creator can update)
+   */
+  update: protectedProcedure
+    .input(z.object({
+      eventId: z.number(),
+      name: z.string().min(1).max(255).optional(),
+      minBudget: z.number().optional(),
+      maxBudget: z.number().optional(),
+      eventDate: z.string().optional(), // ISO date string
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+
+      // Check if user is creator
+      const [event] = await db.select().from(santaEvents)
+        .where(eq(santaEvents.id, input.eventId))
+        .limit(1);
+
+      if (!event) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
+      }
+
+      if (event.creatorId !== ctx.user.id) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Only the creator can update this event" });
+      }
+
+      // Build update object
+      const updateData: any = {};
+      if (input.name !== undefined) updateData.name = input.name;
+      if (input.minBudget !== undefined) updateData.minBudget = input.minBudget;
+      if (input.maxBudget !== undefined) updateData.maxBudget = input.maxBudget;
+      if (input.eventDate !== undefined) updateData.eventDate = input.eventDate ? new Date(input.eventDate) : null;
+      updateData.updatedAt = new Date();
+
+      // Update event
+      const [updatedEvent] = await db.update(santaEvents)
+        .set(updateData)
+        .where(eq(santaEvents.id, input.eventId))
+        .returning();
+
+      return updatedEvent;
+    }),
+
+  /**
+   * Delete event (only creator can delete)
+   */
+  delete: protectedProcedure
+    .input(z.object({
+      eventId: z.number(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+
+      // Check if user is creator
+      const [event] = await db.select().from(santaEvents)
+        .where(eq(santaEvents.id, input.eventId))
+        .limit(1);
+
+      if (!event) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
+      }
+
+      if (event.creatorId !== ctx.user.id) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Only the creator can delete this event" });
+      }
+
+      // Delete related data first (participants, assignments, etc.)
+      const { santaAssignments } = await import("../../drizzle/schema.js");
+      await db.delete(santaAssignments).where(eq(santaAssignments.eventId, input.eventId));
+      await db.delete(eventParticipants).where(eq(eventParticipants.eventId, input.eventId));
+      
+      // Delete event
+      await db.delete(santaEvents).where(eq(santaEvents.id, input.eventId));
+
+      return { success: true };
+    }),
+
+  /**
    * Get user's friends
    */
   myFriends: protectedProcedure

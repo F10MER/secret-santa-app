@@ -40,6 +40,9 @@ export default function SecretSantaTab({ inviteCode, onInviteHandled }: SecretSa
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
   const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -49,6 +52,7 @@ export default function SecretSantaTab({ inviteCode, onInviteHandled }: SecretSa
   });
 
   // Queries
+  const { data: currentUser } = trpc.auth.me.useQuery();
   const { data: events, isLoading, refetch } = trpc.events.myEvents.useQuery();
   const { data: inviteEventData } = trpc.events.getByInviteCode.useQuery(
     { inviteCode: inviteCode! },
@@ -101,6 +105,31 @@ export default function SecretSantaTab({ inviteCode, onInviteHandled }: SecretSa
     },
   });
 
+  const updateEventMutation = trpc.events.update.useMutation({
+    onSuccess: () => {
+      refetch();
+      setShowEditDialog(false);
+      setEditingEvent(null);
+      setFormData({ name: '', minBudget: '', maxBudget: '', date: '' });
+      toast.success(language === 'ru' ? 'Событие обновлено!' : 'Event updated!');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const deleteEventMutation = trpc.events.delete.useMutation({
+    onSuccess: () => {
+      refetch();
+      setShowDeleteDialog(false);
+      setSelectedEventId(null);
+      toast.success(language === 'ru' ? 'Событие удалено!' : 'Event deleted!');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   const handleCreateEvent = () => {
     if (!formData.name || !formData.minBudget || !formData.maxBudget || !formData.date) {
       toast.error(language === 'ru' ? 'Заполните все поля' : 'Fill all fields');
@@ -125,6 +154,44 @@ export default function SecretSantaTab({ inviteCode, onInviteHandled }: SecretSa
 
   const handleDrawNames = (eventId: number) => {
     drawNamesMutation.mutate({ eventId });
+  };
+
+  const handleEditEvent = (event: Event) => {
+    setEditingEvent(event);
+    setFormData({
+      name: event.name,
+      minBudget: event.minBudget?.toString() || '',
+      maxBudget: event.maxBudget?.toString() || '',
+      date: event.eventDate ? new Date(event.eventDate).toISOString().split('T')[0] : '',
+    });
+    setShowEditDialog(true);
+  };
+
+  const handleUpdateEvent = () => {
+    if (!editingEvent) return;
+    if (!formData.name || !formData.minBudget || !formData.maxBudget || !formData.date) {
+      toast.error(language === 'ru' ? 'Заполните все поля' : 'Fill all fields');
+      return;
+    }
+
+    updateEventMutation.mutate({
+      eventId: editingEvent.id,
+      name: formData.name,
+      minBudget: parseFloat(formData.minBudget),
+      maxBudget: parseFloat(formData.maxBudget),
+      eventDate: formData.date,
+    });
+  };
+
+  const handleDeleteEvent = (eventId: number) => {
+    setSelectedEventId(eventId);
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDelete = () => {
+    if (selectedEventId) {
+      deleteEventMutation.mutate({ eventId: selectedEventId });
+    }
   };
 
   if (isLoading) {
@@ -219,6 +286,7 @@ export default function SecretSantaTab({ inviteCode, onInviteHandled }: SecretSa
           const isSelected = selectedEventId === event.id;
           const eventDetails = isSelected ? selectedEventDetails : null;
           const participantCount = eventDetails?.participants.length || 0;
+          const isCreator = currentUser && event.creatorId === currentUser.id;
 
           return (
             <Card
@@ -273,6 +341,34 @@ export default function SecretSantaTab({ inviteCode, onInviteHandled }: SecretSa
               {/* Actions */}
               {isSelected && (
                 <div className="space-y-2 animate-slide-up">
+                  {/* Edit/Delete buttons for creator */}
+                  {isCreator && event.status === 'created' && (
+                    <div className="flex gap-2 mb-2">
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditEvent(event);
+                        }}
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                      >
+                        {language === 'ru' ? '✏️ Редактировать' : '✏️ Edit'}
+                      </Button>
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteEvent(event.id);
+                        }}
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                      >
+                        {language === 'ru' ? '🗑️ Удалить' : '🗑️ Delete'}
+                      </Button>
+                    </div>
+                  )}
+
                   {event.status === 'created' && (
                     <>
                       {/* Invite Link */}
@@ -390,6 +486,102 @@ export default function SecretSantaTab({ inviteCode, onInviteHandled }: SecretSa
                   setShowInviteDialog(false);
                   if (onInviteHandled) onInviteHandled();
                 }}
+                className="flex-1"
+              >
+                {language === 'ru' ? 'Отмена' : 'Cancel'}
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Edit Dialog */}
+      {showEditDialog && editingEvent && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="p-6 max-w-md w-full animate-scale-in">
+            <h3 className="text-xl font-bold mb-4">
+              {language === 'ru' ? '✏️ Редактировать событие' : '✏️ Edit Event'}
+            </h3>
+            <div className="space-y-3">
+              <Input
+                placeholder={t.santa.eventName}
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              />
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  type="number"
+                  placeholder={t.santa.minBudget}
+                  value={formData.minBudget}
+                  onChange={(e) => setFormData({ ...formData, minBudget: e.target.value })}
+                />
+                <Input
+                  type="number"
+                  placeholder={t.santa.maxBudget}
+                  value={formData.maxBudget}
+                  onChange={(e) => setFormData({ ...formData, maxBudget: e.target.value })}
+                />
+              </div>
+              <Input
+                type="date"
+                placeholder={t.santa.eventDate}
+                value={formData.date}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              />
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleUpdateEvent}
+                  className="flex-1"
+                  disabled={updateEventMutation.isPending}
+                >
+                  {updateEventMutation.isPending
+                    ? (language === 'ru' ? 'Сохранение...' : 'Saving...')
+                    : (language === 'ru' ? 'Сохранить' : 'Save')
+                  }
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowEditDialog(false);
+                    setEditingEvent(null);
+                    setFormData({ name: '', minBudget: '', maxBudget: '', date: '' });
+                  }}
+                  className="flex-1"
+                >
+                  {language === 'ru' ? 'Отмена' : 'Cancel'}
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="p-6 max-w-md w-full animate-scale-in">
+            <h3 className="text-xl font-bold mb-4 text-red-600">
+              {language === 'ru' ? '🗑️ Удалить событие?' : '🗑️ Delete Event?'}
+            </h3>
+            <p className="text-muted-foreground mb-6">
+              {language === 'ru'
+                ? 'Вы уверены, что хотите удалить это событие? Это действие нельзя отменить.'
+                : 'Are you sure you want to delete this event? This action cannot be undone.'}
+            </p>
+            <div className="flex gap-2">
+              <Button
+                onClick={confirmDelete}
+                className="flex-1 bg-red-600 hover:bg-red-700"
+                disabled={deleteEventMutation.isPending}
+              >
+                {deleteEventMutation.isPending
+                  ? (language === 'ru' ? 'Удаление...' : 'Deleting...')
+                  : (language === 'ru' ? 'Удалить' : 'Delete')
+                }
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowDeleteDialog(false)}
                 className="flex-1"
               >
                 {language === 'ru' ? 'Отмена' : 'Cancel'}

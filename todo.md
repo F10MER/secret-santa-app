@@ -325,3 +325,13 @@
 - [x] Bot: Auto-join user to event and add friend when using invite link
 - [x] Remove ability to browse/join events without invite link
 - [ ] Test invite flow end-to-end
+
+## Edit and Delete Secret Santa Events (Nov 25, 2024)
+- [x] Backend API: Update event endpoint (name, budget, date)
+- [x] Backend API: Delete event endpoint (only creator can delete)
+- [x] Backend API: Check if user is event creator
+- [x] Frontend: Add edit button for event creator
+- [x] Frontend: Add delete button with confirmation dialog
+- [x] Frontend: Edit dialog with form pre-filled with current values
+- [x] Frontend: Only show edit/delete for events created by current user
+- [ ] Test edit and delete functionality
