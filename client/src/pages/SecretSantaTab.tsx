@@ -62,6 +62,14 @@ export default function SecretSantaTab({ inviteCode, onInviteHandled }: SecretSa
     { eventId: selectedEventId! },
     { enabled: !!selectedEventId }
   );
+  const { data: myAssignment } = trpc.santa.getMyAssignment.useQuery(
+    { eventId: selectedEventId! },
+    { enabled: !!selectedEventId }
+  );
+  const { data: recipientWishlist } = trpc.wishlist.getPublicWishlist.useQuery(
+    { userId: myAssignment?.receiver?.userId! },
+    { enabled: !!myAssignment?.receiver?.userId }
+  );
 
   // Show invite dialog when invite code is present
   useEffect(() => {
@@ -422,12 +430,56 @@ export default function SecretSantaTab({ inviteCode, onInviteHandled }: SecretSa
                   )}
 
                   {/* Show recipient if assigned */}
-                  {event.status === 'assigned' && (
-                    <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-4 rounded-lg text-center animate-scale-in">
-                      <p className="text-sm mb-1">{t.santa.yourRecipient}</p>
-                      <p className="text-2xl font-bold">
-                        {language === 'ru' ? 'Загрузка...' : 'Loading...'}
-                      </p>
+                  {event.status === 'assigned' && myAssignment?.receiver && (
+                    <div className="space-y-3">
+                      <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-4 rounded-lg text-center animate-scale-in">
+                        <p className="text-sm mb-1">{t.santa.yourRecipient}</p>
+                        <p className="text-2xl font-bold">
+                          {myAssignment.receiver.name}
+                        </p>
+                      </div>
+
+                      {/* Recipient's Wishlist */}
+                      {recipientWishlist && recipientWishlist.length > 0 && (
+                        <div className="bg-secondary/50 p-4 rounded-lg">
+                          <h4 className="font-semibold mb-3">
+                            {language === 'ru' ? '🎁 Список желаний:' : '🎁 Wishlist:'}
+                          </h4>
+                          <div className="space-y-2">
+                            {recipientWishlist.map((item) => (
+                              <div key={item.id} className="bg-background p-3 rounded-lg">
+                                <div className="flex gap-3">
+                                  {item.imageUrl && (
+                                    <img
+                                      src={item.imageUrl}
+                                      alt={item.title}
+                                      className="w-16 h-16 object-cover rounded"
+                                    />
+                                  )}
+                                  <div className="flex-1">
+                                    <h5 className="font-medium">{item.title}</h5>
+                                    {item.description && (
+                                      <p className="text-sm text-muted-foreground mt-1">
+                                        {item.description}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {recipientWishlist && recipientWishlist.length === 0 && (
+                        <div className="bg-secondary/50 p-4 rounded-lg text-center text-muted-foreground">
+                          <p className="text-sm">
+                            {language === 'ru' 
+                              ? 'Список желаний пуст' 
+                              : 'Wishlist is empty'}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

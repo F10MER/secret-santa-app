@@ -19,6 +19,7 @@ import { WishlistItem } from '../types';
 import { toast } from 'sonner';
 import MyReservations from './MyReservations';
 import StatisticsPage from './StatisticsPage';
+import FriendsPage from './FriendsPage';
 import { AddWishlistItemDialog } from '../components/AddWishlistItemDialog';
 import { trpc } from '@/lib/trpc';
 
@@ -56,6 +57,7 @@ export default function ProfileTab() {
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showMyReservations, setShowMyReservations] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
+  const [showFriends, setShowFriends] = useState(false);
   const [wishlistPrivacy, setWishlistPrivacy] = useState<'all' | 'friends'>('all');
   const [showAddDialog, setShowAddDialog] = useState(false);
 
@@ -104,6 +106,20 @@ export default function ProfileTab() {
       .join('')
       .toUpperCase();
   };
+
+  // Friends View
+  if (showFriends) {
+    return (
+      <div>
+        <div className="flex items-center justify-between mb-4 px-4 pt-6">
+          <Button variant="outline" onClick={() => setShowFriends(false)} size="sm">
+            {language === 'ru' ? '← Назад' : '← Back'}
+          </Button>
+        </div>
+        <FriendsPage />
+      </div>
+    );
+  }
 
   // My Reservations View
   if (showMyReservations) {
@@ -221,6 +237,15 @@ export default function ProfileTab() {
       >
         <TrophyIcon size={20} className="mr-2" />
         {language === 'ru' ? 'Статистика и достижения' : 'Statistics & Achievements'}
+      </Button>
+
+      {/* Friends Button */}
+      <Button
+        onClick={() => setShowFriends(true)}
+        className="w-full mb-4 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700"
+      >
+        <UserIcon size={20} className="mr-2" />
+        {language === 'ru' ? 'Друзья' : 'Friends'}
       </Button>
 
       {/* My Reservations Button */}

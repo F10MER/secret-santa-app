@@ -335,3 +335,24 @@
 - [x] Frontend: Edit dialog with form pre-filled with current values
 - [x] Frontend: Only show edit/delete for events created by current user
 - [ ] Test edit and delete functionality
+
+## Show Recipient After Draw (Nov 25, 2024)
+- [x] Backend API: Get assigned recipient for user in event
+- [x] Backend API: Get recipient's wishlist
+- [x] Frontend: Show recipient name and wishlist after draw
+- [x] Frontend: Hide recipient from other participants
+- [x] Add "View Wishlist" button for recipient
+
+## Friends Page (Nov 25, 2024)
+- [x] Create FriendsTab component
+- [x] Backend API: Get friends list with details
+- [x] Frontend: Display friends list with avatars
+- [x] Frontend: Show friend's wishlist when clicked
+- [ ] Add friend count badge
+
+## Telegram Notifications (Nov 25, 2024)
+- [x] Bot: Send notification when names are drawn
+- [x] Bot: Send notification with recipient info to each participant
+- [ ] Bot: Send reminder 3 days before event date
+- [ ] Bot: Send reminder 1 day before event date
+- [ ] Add notification preferences in user settings

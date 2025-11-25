@@ -108,6 +108,12 @@ export const appRouter = router({
           });
         }
 
+        // Get event details for notification
+        const event = await db.getEventById(input.eventId);
+        if (!event) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
+        }
+
         // Shuffle participants for random assignment
         const shuffled = shuffleArray(participants);
         const assignments = shuffled.map((giver, index) => ({
@@ -118,6 +124,19 @@ export const appRouter = router({
 
         await db.createAssignments(assignments);
         await db.updateEventStatus(input.eventId, "assigned");
+
+        // Send notifications to all participants
+        const { notifyAssignment } = await import("./bot.js");
+        for (let i = 0; i < shuffled.length; i++) {
+          const giver = shuffled[i];
+          const receiver = shuffled[(i + 1) % shuffled.length];
+          if (giver?.userId && receiver) {
+            // Send notification asynchronously (don't block)
+            notifyAssignment(giver.userId, event.name, receiver.name).catch(err => {
+              console.error(`[Bot] Failed to notify user ${giver.userId}:`, err);
+            });
+          }
+        }
 
         return { success: true };
       }),
