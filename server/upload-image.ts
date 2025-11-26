@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { storagePut } from './storage.js';
+import { uploadToS3 } from './s3-storage.js';
 import { randomBytes } from 'crypto';
 
 const router = Router();
@@ -32,9 +32,10 @@ router.post('/upload-image', upload.single('file'), async (req, res) => {
     const randomSuffix = randomBytes(8).toString('hex');
     const fileName = `wishlist-${Date.now()}-${randomSuffix}.${fileExtension}`;
 
-    // Upload to S3
-    const { url } = await storagePut(
-      `wishlist-images/${fileName}`,
+    // Upload to Selectel S3
+    const s3Key = `wishlist-images/${fileName}`;
+    const url = await uploadToS3(
+      s3Key,
       req.file.buffer,
       req.file.mimetype
     );
