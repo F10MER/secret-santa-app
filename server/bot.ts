@@ -54,7 +54,7 @@ export function initBot() {
       }
       
       const keyboard = new InlineKeyboard()
-        .webApp("🎄 Open Secret Santa App", appUrl);
+        .webApp("🎄 Открыть приложение", appUrl);
 
       // Try to check if user exists, create if not
       let user = null;
@@ -82,19 +82,25 @@ export function initBot() {
 
       if (!user) {
         const welcomeMessage = inviteCode 
-          ? `🎅 Welcome to Secret Santa!\n\n` +
-            `You've been invited to join an event!\n\n` +
-            `Click the button below to accept the invitation:`
-          : `🎅 Welcome to Secret Santa!\n\n` +
-            `Organize gift exchanges, create wishlists, and have fun with randomizers!\n\n` +
-            `Click the button below to start:`;
+          ? `🎅 Добро пожаловать в Secret Santa!\n\n` +
+            `Вас пригласили присоединиться к событию!\n\n` +
+            `⚠️ Приложение находится в стадии разработки и тестирования\n` +
+            `По вопросам: @airat_web3\n\n` +
+            `Нажмите кнопку ниже, чтобы принять приглашение:`
+          : `🎅 Добро пожаловать в Secret Santa!\n\n` +
+            `Организуйте обмен подарками, создавайте вишлисты и веселитесь с рандомайзерами!\n\n` +
+            `⚠️ Приложение находится в стадии разработки и тестирования\n` +
+            `По вопросам: @airat_web3\n\n` +
+            `Нажмите кнопку ниже, чтобы начать:`;
         
         await ctx.reply(welcomeMessage, { reply_markup: keyboard });
     } else {
       await ctx.reply(
-        `🎄 Welcome back, ${user.name || "friend"}!\n\n` +
-        `Your current points: ${user.points} 🌟\n\n` +
-        `Open the app to continue:`,
+        `🎄 С возвращением, ${user.name || "друг"}!\n\n` +
+        `Ваши баллы: ${user.points} 🌟\n\n` +
+        `⚠️ Приложение находится в стадии разработки и тестирования\n` +
+        `По вопросам: @airat_web3\n\n` +
+        `Откройте приложение, чтобы продолжить:`,
         { reply_markup: keyboard }
       );
       }
