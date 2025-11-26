@@ -28,7 +28,8 @@ export async function uploadToS3(
 
   await s3Client.send(command);
 
-  // Return public URL
-  const publicUrl = `https://${BUCKET_NAME}.s3.${process.env.S3_REGION || 'ru-7'}.storage.selcloud.ru/${key}`;
+  // Return public URL for Selectel S3
+  const region = process.env.S3_REGION || 'ru-7';
+  const publicUrl = `https://${BUCKET_NAME}.${region}.storage.selcloud.ru/${key}`;
   return publicUrl;
 }
