@@ -2,7 +2,9 @@ import { Router } from 'express';
 import multer from 'multer';
 import { uploadToS3 } from './s3-storage.js';
 import { randomBytes } from 'crypto';
-import { verifyAuthToken } from './auth.js';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 const router = Router();
 
@@ -31,8 +33,10 @@ router.post('/upload-image', upload.single('file'), async (req, res) => {
     }
 
     const token = authHeader.substring(7);
-    const user = verifyAuthToken(token);
-    if (!user) {
+    let user;
+    try {
+      user = jwt.verify(token, JWT_SECRET) as any;
+    } catch (error) {
       return res.status(401).json({ error: 'Invalid token' });
     }
 
