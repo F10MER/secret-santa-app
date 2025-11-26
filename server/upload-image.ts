@@ -50,7 +50,7 @@ router.post('/upload-image', upload.single('file'), async (req, res) => {
     const fileName = `wishlist-${Date.now()}-${randomSuffix}.${fileExtension}`;
 
     // Upload to Selectel S3 with user folder structure
-    const s3Key = `users/${user.id}/wishlist/${fileName}`;
+    const s3Key = `users/${user.userId}/wishlist/${fileName}`;
     const url = await uploadToS3(
       s3Key,
       req.file.buffer,
