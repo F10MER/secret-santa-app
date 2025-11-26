@@ -309,6 +309,26 @@ export async function updateWishlistPrivacy(itemId: number, userId: number, priv
   await db.update(wishlistItems).set({ privacy }).where(and(eq(wishlistItems.id, itemId), eq(wishlistItems.userId, userId)));
 }
 
+export async function updateWishlistItem(
+  itemId: number,
+  userId: number,
+  updates: {
+    title?: string;
+    description?: string;
+    imageUrl?: string;
+    link?: string;
+    privacy?: 'all' | 'friends';
+  }
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(wishlistItems)
+    .set(updates)
+    .where(and(eq(wishlistItems.id, itemId), eq(wishlistItems.userId, userId)));
+}
+
 // Randomizer History
 export async function saveRandomizerResult(history: InsertRandomizerHistory) {
   const db = await getDb();

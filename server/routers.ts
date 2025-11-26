@@ -250,6 +250,22 @@ export const appRouter = router({
         return { success: true };
       }),
 
+    // Update wishlist item
+    update: protectedProcedure
+      .input(z.object({
+        itemId: z.number(),
+        title: z.string().min(1).max(255).optional(),
+        description: z.string().optional(),
+        imageUrl: z.string().optional(),
+        link: z.string().optional(),
+        privacy: z.enum(["all", "friends"]).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { itemId, ...updates } = input;
+        await db.updateWishlistItem(itemId, ctx.user.id, updates);
+        return { success: true };
+      }),
+
     // Get public wishlist by user ID
     getPublicWishlist: publicProcedure
       .input(z.object({ userId: z.number() }))
