@@ -335,7 +335,11 @@ export async function getLeaderboard(limit: number = 10) {
   const db = await getDb();
   if (!db) return [];
 
-  return await db.select().from(users).orderBy(desc(users.points)).limit(limit);
+  // Filter to show only real users (those with telegramId)
+  return await db.select().from(users)
+    .where(sql`${users.telegramId} IS NOT NULL`)
+    .orderBy(desc(users.points))
+    .limit(limit);
 }
 
 // Points Management

@@ -1,10 +1,12 @@
 import { Card } from '@/components/ui/card';
-import { GiftIcon, BrainIcon, TrophyIcon } from '../components/Icons';
+import { GiftIcon, BrainIcon, TrophyIcon, ShareIcon, UserIcon } from '../components/Icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTelegram } from '../contexts/TelegramContext';
 import { MOCK_USER } from '../constants';
 import { useState, useEffect } from 'react';
 import { trpc } from '../lib/trpc';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 interface HomeTabProps {
   onNavigate: (tab: string) => void;
@@ -95,6 +97,19 @@ export default function HomeTab({ onNavigate }: HomeTabProps) {
           <span className="text-2xl font-bold">{points}</span>
         </div>
       </div>
+
+      {/* Invite Friend Button */}
+      <Button
+        onClick={() => {
+          const inviteLink = `https://t.me/moisanta_bot?start=ref_${currentUser?.id || 'user'}`;
+          navigator.clipboard.writeText(inviteLink);
+          toast.success(language === 'ru' ? 'Ссылка скопирована! Отправьте её другу' : 'Link copied! Send it to a friend');
+        }}
+        className="w-full mb-6 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+      >
+        <UserIcon size={20} className="mr-2" />
+        {language === 'ru' ? '🎁 Пригласить друга (+10 баллов)' : '🎁 Invite a Friend (+10 points)'}
+      </Button>
 
       {/* Dashboard Cards */}
       <div className="space-y-4 mb-6">

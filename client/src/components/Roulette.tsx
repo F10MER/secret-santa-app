@@ -29,7 +29,7 @@ export function Roulette() {
   };
 
   const removeParticipant = (index: number) => {
-    if (participants.length > 3) {
+    if (participants.length > 1) {
       setParticipants(participants.filter((_, i) => i !== index));
     }
   };

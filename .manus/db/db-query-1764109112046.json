@@ -1,0 +1,9 @@
+{
+  "query": "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4MLmj7VnsLHs6bq.32afa1fdb4e4 --database JwRcUjv5PSirsVZ9cATS34 --execute SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 63
+}

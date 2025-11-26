@@ -11,11 +11,19 @@ export default function FriendsPage() {
   const [selectedFriendId, setSelectedFriendId] = useState<number | null>(null);
 
   // Queries
-  const { data: friends, isLoading } = trpc.events.myFriends.useQuery();
+  const { data: friends, isLoading, refetch } = trpc.events.myFriends.useQuery();
   const { data: friendWishlist } = trpc.wishlist.getPublicWishlist.useQuery(
     { userId: selectedFriendId! },
     { enabled: !!selectedFriendId }
   );
+
+  // Mutation for removing friend
+  const removeFriend = trpc.events.removeFriend.useMutation({
+    onSuccess: () => {
+      refetch();
+      setSelectedFriendId(null);
+    },
+  });
 
   if (isLoading) {
     return (
@@ -78,6 +86,19 @@ export default function FriendsPage() {
                     {language === 'ru' ? 'Друг' : 'Friend'}
                   </p>
                 </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="ml-auto text-red-500 hover:text-red-700 hover:bg-red-50"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (confirm(language === 'ru' ? 'Удалить из друзей?' : 'Remove friend?')) {
+                      removeFriend.mutate({ friendId: friend.id });
+                    }
+                  }}
+                >
+                  {language === 'ru' ? 'Удалить' : 'Remove'}
+                </Button>
               </div>
 
               {/* Friend's Wishlist */}

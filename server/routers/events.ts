@@ -77,6 +77,10 @@ export const eventsRouter = router({
         invitedBy: null, // Creator wasn't invited
       });
 
+      // Award points for creating event (+50 points)
+      const { addPoints } = await import("../db.js");
+      await addPoints(ctx.user.id, 50);
+
       return event;
     }),
 
@@ -156,6 +160,10 @@ export const eventsRouter = router({
       // Add friend relationship if invited by someone
       if (input.invitedBy && input.invitedBy !== ctx.user.id) {
         await addFriendship(ctx.user.id, input.invitedBy);
+        
+        // Award points to inviter for referral (+10 points)
+        const { addPoints } = await import("../db.js");
+        await addPoints(input.invitedBy, 10);
       }
 
       return { success: true, event };
@@ -321,13 +329,45 @@ export const eventsRouter = router({
         return [];
       }
 
-      // Get friend details (this is a simple approach, could be optimized with a join)
+      // Get friend details using inArray to get all friends
       const friendIds = friendRelations.map(f => f.friendId);
       const { users } = await import("../../drizzle/schema.js");
+      const { inArray } = await import("drizzle-orm");
       
       const friends = await db.select().from(users)
-        .where(eq(users.id, friendIds[0])); // Note: This needs to be improved for multiple IDs
+        .where(inArray(users.id, friendIds));
 
       return friends;
+    }),
+
+  /**
+   * Remove friend
+   */
+  removeFriend: protectedProcedure
+    .input(z.object({
+      friendId: z.number(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+
+      // Remove bidirectional friendship
+      await db.delete(friendships)
+        .where(
+          and(
+            eq(friendships.userId, ctx.user.id),
+            eq(friendships.friendId, input.friendId)
+          )
+        );
+      
+      await db.delete(friendships)
+        .where(
+          and(
+            eq(friendships.userId, input.friendId),
+            eq(friendships.friendId, ctx.user.id)
+          )
+        );
+
+      return { success: true };
     }),
 });

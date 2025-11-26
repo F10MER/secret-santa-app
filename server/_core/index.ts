@@ -11,6 +11,7 @@ import { initBot, getBotWebhookHandler, setupWebhook } from "../bot.js";
 import { validateTelegramWebAppData, generateAuthToken } from "../auth.js";
 import * as db from "../db.js";
 import { getTelegramAvatar } from "../telegram-avatar.js";
+import uploadImageRouter from "../upload-image.js";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -83,6 +84,9 @@ async function startServer() {
   
   // Telegram avatar endpoint
   app.get("/api/telegram-avatar/:userId", getTelegramAvatar);
+  
+  // Image upload endpoint
+  app.use("/api", uploadImageRouter);
   // tRPC API
   app.use(
     "/api/trpc",

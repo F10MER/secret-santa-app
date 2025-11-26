@@ -421,3 +421,58 @@
 - [ ] Use canvas or server-side image generation
 - [ ] Add Telegram share functionality
 - [ ] Include event name, date, and participant count in image
+
+## Event Creation Database Error (Nov 25, 2024)
+- [x] Insert query failing when creating Secret Santa event - found root cause
+- [x] Error message shows query with params but no specific error - database incompatibility
+- [x] Need to check database schema vs insert query - tables don't exist
+- [x] Possible issue with column types or constraints - TiDB vs PostgreSQL
+- [x] **CRITICAL: Database is TiDB (MySQL-compatible), but code uses PostgreSQL** - RESOLVED: Database is actually PostgreSQL 16.3
+- [x] Need to either: 1) Switch to PostgreSQL in Easypanel, OR 2) Convert schema to MySQL - NOT NEEDED: Already PostgreSQL
+- [x] Current schema uses PostgreSQL ENUM types which TiDB doesn't support - RESOLVED: Database supports ENUM
+- [x] No tables exist in database - migrations never ran successfully - FIXED: Migrations applied manually via Docker
+- [x] Application now working after migrations applied
+
+## User Requested Improvements (Nov 26, 2024)
+
+### Points System Fixes
+- [x] Fix referral points: +10 points should be awarded when someone joins via invite link
+- [x] Fix event creation points: +50 points should be awarded when organizing Secret Santa event
+- [ ] Test points are correctly added to user balance
+- [ ] Verify points display updates in real-time
+
+### Invite & Friends System
+- [x] Add "Invite" button in main app (global invite, not just event-specific)
+- [x] Show bidirectional friendship: invited user should see who invited them as friend (already implemented in addFriendship)
+- [x] Add "Remove Friend" functionality in friends list
+- [x] Allow users to remove themselves from friends list (bidirectional removal)
+- [x] Add confirmation dialog for friend removal
+
+### Leaderboard Filtering
+- [x] Filter leaderboard to show only real users (exclude mock users)
+- [x] Ensure isMockUser flag is properly checked in leaderboard query (using telegramId IS NOT NULL)
+- [x] Update frontend to handle filtered leaderboard data (no changes needed)
+
+### Roulette Improvements
+- [x] Remove strict 3 participant minimum requirement
+- [x] Allow roulette to work with any number of participants (1+)
+- [x] Update validation logic in frontend
+
+### Wishlist Image Upload
+- [x] Replace image URL input field with file upload button
+- [x] Support images up to 3MB size limit
+- [x] Upload images to S3 storage using storagePut()
+- [x] Store S3 URL in database
+- [x] Keep product link as separate optional field
+- [x] Add image preview after upload
+- [x] Add file size validation (show error if > 3MB)
+
+### Theme Switcher UX Improvement
+- [x] Replace current theme switcher with intuitive sun/moon toggle
+- [x] Use standard icons (sun for light, moon for dark)
+- [x] Make toggle more visually clear (like common services: Telegram, Twitter, etc.)
+- [x] Add smooth transition animation between themes
+- [x] Position toggle in accessible location (top-right or settings)
+
+## Bug Fixes (Nov 26, 2024)
+- [x] Fixed myFriends query to return all friends (was only returning first friend due to eq instead of inArray)

@@ -1,0 +1,13 @@
+{
+  "query": "SELECT version();",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4MLmj7VnsLHs6bq.32afa1fdb4e4 --database JwRcUjv5PSirsVZ9cATS34 --execute SELECT version();",
+  "rows": [
+    {
+      "version()": "8.0.11-TiDB-v7.5.6-serverless"
+    }
+  ],
+  "messages": [],
+  "stdout": "version()\n8.0.11-TiDB-v7.5.6-serverless\n",
+  "stderr": "",
+  "execution_time_ms": 51
+}
