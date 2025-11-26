@@ -80,6 +80,10 @@ export const eventsRouter = router({
       // Award points for creating event (+50 points)
       const { addPoints } = await import("../db.js");
       await addPoints(ctx.user.id, 50);
+      
+      // Send Telegram notification
+      const { notifyPointsEarned } = await import("../bot.js");
+      await notifyPointsEarned(ctx.user.id, 50, "creating Secret Santa event");
 
       return event;
     }),
@@ -164,6 +168,10 @@ export const eventsRouter = router({
         // Award points to inviter for referral (+10 points)
         const { addPoints } = await import("../db.js");
         await addPoints(input.invitedBy, 10);
+        
+        // Send Telegram notification to inviter
+        const { notifyPointsEarned } = await import("../bot.js");
+        await notifyPointsEarned(input.invitedBy, 10, "inviting a friend");
       }
 
       return { success: true, event };

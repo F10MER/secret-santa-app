@@ -476,3 +476,29 @@
 
 ## Bug Fixes (Nov 26, 2024)
 - [x] Fixed myFriends query to return all friends (was only returning first friend due to eq instead of inArray)
+
+## New Features (Nov 26, 2024)
+
+### Telegram Notifications
+- [x] Send notification when someone reserves a gift from user's wishlist
+- [x] Send notification when points are awarded (+10 referral, +50 event)
+- [x] Include details: who reserved, which item, how many points earned
+- [x] Use bot.telegram.sendMessage with user's telegramId
+- [ ] Add notification preferences (optional: allow users to disable)
+
+### Event History Archive
+- [ ] Create "History" tab or section in Events
+- [ ] Show completed/finished Secret Santa events
+- [ ] Display event results: who was assigned to whom
+- [ ] Show event date, participants count, creator
+- [ ] Add filter: active vs archived events
+- [ ] Mark events as "completed" when assignments are revealed
+
+### Achievements System Activation
+- [ ] Integrate AchievementsBadges component into ProfileTab
+- [ ] Auto-check achievements after key actions (event creation, friend add, gift reservation)
+- [ ] Add unlock animation when achievement is earned
+- [ ] Show achievement progress (e.g., "3/5 friends")
+- [ ] Define achievement types: first_event, 5_friends, 10_gifts_given, 10_gifts_received
+- [ ] Backend API to award achievements and check progress
+- [ ] Show toast notification when achievement unlocked

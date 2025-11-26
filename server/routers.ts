@@ -286,10 +286,42 @@ export const appRouter = router({
 
     // Reserve gift
     reserveGift: protectedProcedure
-      .input(z.object({ wishlistItemId: z.number() }))
-      .mutation(async ({ ctx, input }) => {
+      .input(z.object({ wishlistItemId: z.number() }))      .mutation(async ({ ctx, input }) => {
         try {
           const reservationId = await db.reserveWishlistItem(input.wishlistItemId, ctx.user.id);
+          
+          // Get all wishlist items to find the reserved item and its owner
+          const database = await db.getDb();
+          if (database) {
+            const { wishlistItems } = await import("../drizzle/schema.js");
+            const [item] = await database.select().from(wishlistItems)
+              .where(eq(wishlistItems.id, input.wishlistItemId)).limit(1);
+            
+            if (item) {
+              // Get owner details
+              const owner = await db.getUserByOpenId(String(item.userId));
+              
+              // Send Telegram notification to wishlist owner
+              if (owner?.telegramId) {
+                const { bot } = await import("./bot.js");
+                if (bot) {
+                  try {
+                    await bot.api.sendMessage(
+                      owner.telegramId,
+                      `🎁 *Gift Reserved!*\n\n` +
+                      `${ctx.user.name || 'Someone'} reserved your wishlist item:\n` +
+                      `"${item.title || item.description}"\n\n` +
+                      `Check the app for details! 🎅`,
+                      { parse_mode: "Markdown" }
+                    );
+                  } catch (error) {
+                    console.error("[Notification] Failed to send reservation notification:", error);
+                  }
+                }
+              }
+            }
+          }
+          
           return { success: true, reservationId };
         } catch (error: any) {
           throw new TRPCError({

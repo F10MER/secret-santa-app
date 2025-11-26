@@ -43,6 +43,7 @@ export default function SecretSantaTab({ inviteCode, onInviteHandled }: SecretSa
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [eventFilter, setEventFilter] = useState<'active' | 'history'>('active');
   
   const [formData, setFormData] = useState({
     name: '',
@@ -217,6 +218,30 @@ export default function SecretSantaTab({ inviteCode, onInviteHandled }: SecretSa
     <div className="pb-20 px-4 pt-6 animate-fade-in">
       <SectionTitle>{t.santa.title}</SectionTitle>
 
+      {/* Filter Tabs */}
+      <div className="flex gap-2 mb-4 bg-card rounded-lg p-1">
+        <button
+          onClick={() => setEventFilter('active')}
+          className={`flex-1 px-4 py-2 rounded-md font-medium transition-colors ${
+            eventFilter === 'active'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          {language === 'ru' ? 'Активные' : 'Active'}
+        </button>
+        <button
+          onClick={() => setEventFilter('history')}
+          className={`flex-1 px-4 py-2 rounded-md font-medium transition-colors ${
+            eventFilter === 'history'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          {language === 'ru' ? 'История' : 'History'}
+        </button>
+      </div>
+
       {/* Create Button */}
       {!showCreateForm && (
         <Button
@@ -290,7 +315,14 @@ export default function SecretSantaTab({ inviteCode, onInviteHandled }: SecretSa
       )}
 
       <div className="space-y-4">
-        {events?.map((event, index) => {
+        {events?.filter(event => {
+          // Filter events based on status
+          if (eventFilter === 'active') {
+            return event.status === 'created' || event.status === 'assigned';
+          } else {
+            return event.status === 'completed' || event.status === 'revealed';
+          }
+        }).map((event, index) => {
           const isSelected = selectedEventId === event.id;
           const eventDetails = isSelected ? selectedEventDetails : null;
           const participantCount = eventDetails?.participants.length || 0;

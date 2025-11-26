@@ -3,7 +3,7 @@ import { relations } from "drizzle-orm";
 
 // Enums
 export const roleEnum = pgEnum("role", ["user", "admin"]);
-export const statusEnum = pgEnum("status", ["created", "assigned"]);
+export const statusEnum = pgEnum("status", ["created", "assigned", "completed", "revealed"]);
 export const privacyEnum = pgEnum("privacy", ["all", "friends"]);
 export const randomizerTypeEnum = pgEnum("randomizer_type", ["dice", "roulette"]);
 export const categoryEnum = pgEnum("category", ["electronics", "books", "clothing", "toys", "food", "sports", "beauty", "home", "other"]);
